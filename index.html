@@ -1,3 +1,6 @@
+Je vais modifier le code pour que le lien du projet BTS SIO soit accessible et vous emmène sur une page de détails. Voici le code modifié :
+
+```html
 <!DOCTYPE html> 
 <html lang="fr"> 
 <head> 
@@ -512,9 +515,9 @@
                         <div class="card-body"> 
                             <h5 class="card-title">Projet BTS S.I.O</h5> 
                             <p class="card-text">Développement d'une application de gestion pour mon projet de BTS S.I.O.</p> 
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#projectModal1"> 
+                            <a href="projet-bts-sio.html" class="btn btn-sm btn-outline-primary"> 
                                 Voir les détails 
-                            </button> 
+                            </a> 
                         </div> 
                     </div> 
                 </div> 
@@ -695,71 +698,4 @@
                     <div class="col-md-6"> 
                         <div class="mb-3"> 
                             <label class="form-label">Âge</label> 
-                            <input type="text" class="form-control" id="aboutAge" value="20 ans"> 
-                        </div> 
-                    </div> 
-                    <div class="col-md-6"> 
-                        <div class="mb-3"> 
-                            <label class="form-label">Diplôme</label> 
-                            <input type="text" class="form-control" id="aboutDiploma" value="Baccalauréat Général"> 
-                        </div> 
-                    </div> 
-                </div> 
-                <button class="btn btn-sm btn-success" id="saveAbout">Enregistrer les modifications</button> 
-            </div> 
-            <div class="admin-section"> 
-                <h5>Section Compétences</h5> 
-                <div id="skillsContainer"> 
-                    <!-- Skills will be populated here --> 
-                </div> 
-                <button class="btn btn-sm btn-primary mt-2" id="addSkill">+ Ajouter une compétence</button> 
-                <button class="btn btn-sm btn-success mt-2" id="saveSkills">Enregistrer les compétences</button> 
-            </div> 
-            <div class="admin-section"> 
-                <h5>Section Projets</h5> 
-                <div class="mb-3"> 
-                    <label class="form-label">Titre du projet</label> 
-                    <input type="text" class="form-control" id="projectTitle" value="Projet BTS S.I.O"> 
-                </div> 
-                <div class="mb-3"> 
-                    <label class="form-label">Description du projet</label> 
-                    <textarea class="form-control" id="projectDescription" rows="3">Développement d'une application de gestion pour mon projet de BTS S.I.O.</textarea> 
-                </div> 
-                <div class="mb-3"> 
-                    <label class="form-label">Lien du projet</label> 
-                    <input type="text" class="form-control" id="projectLink" value="https://docs.google.com/document/d/1pvv0SphlzQTbiNT3qDrTm86kh2ErOPhSCuC1TdndKJ4/edit?usp=sharing"> 
-                </div> 
-                <button class="btn btn-sm btn-success" id="saveProject">Enregistrer le projet</button> 
-            </div> 
-            <div class="admin-section"> 
-                <h5>Section Expérience</h5> 
-                <div id="experienceContainer"> 
-                    <!-- Experience items will be populated here --> 
-                </div> 
-                <button class="btn btn-sm btn-primary mt-2" id="addExperience">+ Ajouter une expérience</button> 
-                <button class="btn btn-sm btn-success mt-2" id="saveExperience">Enregistrer les expériences</button> 
-            </div> 
-            <div class="admin-section"> 
-                <h5>Comptes rendus</h5> 
-                <div class="mb-3"> 
-                    <label class="form-label">Nouveau compte rendu</label> 
-                    <input type="text" class="form-control mb-2" id="reportTitle" placeholder="Titre du compte rendu"> 
-                    <textarea class="form-control" id="reportContent" rows="3" placeholder="Contenu du compte rendu"></textarea> 
-                </div> 
-                <button class="btn btn-sm btn-primary" id="addReport">Ajouter le compte rendu</button> 
-                <div class="mt-3"> 
-                    <h6>Comptes rendus existants</h6> 
-                    <div id="reportsList"> 
-                        <!-- Reports will be listed here --> 
-                    </div> 
-                </div> 
-            </div> 
-        </div> 
-    </div> 
-
-    <!-- Project Modal --> 
-    <div class="modal fade" id="projectModal1" tabindex="-1" aria-hidden="true"> 
-        <div class="modal-dialog modal-lg"> 
-            <div
-
-
+                            <input type="text"
