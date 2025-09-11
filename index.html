@@ -282,58 +282,26 @@
             opacity: 1;
         }
         
-        /* Admin Panel */
-        .admin-panel {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 400px;
-            height: 100vh;
-            background: white;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-            z-index: 1050;
-            transition: right 0.3s ease;
-            overflow-y: auto;
-            padding: 20px;
+        /* PDF Viewer Modal */
+        .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
         }
         
-        .admin-panel.open {
-            right: 0;
-        }
-        
-        .admin-toggle {
-            position: fixed;
-            top: 100px;
-            right: 0;
-            background: var(--primary-color);
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
-            padding: 10px 15px;
-            border-radius: 5px 0 0 5px;
-            cursor: pointer;
-            z-index: 1040;
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
         }
         
-        .admin-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .btn-close {
+            filter: invert(1);
+        }
+        
+        .pdf-container {
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1040;
-            display: none;
-        }
-        
-        .admin-overlay.show {
-            display: block;
-        }
-        
-        .admin-section {
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
+            height: 500px;
+            border: none;
+            border-radius: 0 0 15px 15px;
         }
         
         /* Animations */
@@ -366,9 +334,8 @@
                 padding: 60px 0;
             }
             
-            .admin-panel {
-                width: 100%;
-                right: -100%;
+            .pdf-container {
+                height: 300px;
             }
         }
     </style>
@@ -535,7 +502,7 @@
     <!-- Projects Section -->
     <section id="projets" class="bg-light">
         <div class="container">
-            <h2 class="section-title text-center">Mes projets</h2>
+            <h2 class="section-title text-center">Mes projets et comptes rendus</h2>
             <div class="row">
                 <!-- Project 1 -->
                 <div class="col-md-6 col-lg-4 mb-4">
@@ -544,331 +511,4 @@
                             <i class="fas fa-file-pdf"></i>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">Compte rendu TP n°2</h5>
-                            <p class="card-text">Compte rendu du TP Portfolio réalisé dans le cadre du BTS SIO.</p>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#projectModal1">
-                                Voir les détails
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Project 2 -->
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="project-card card">
-                        <div class="project-icon">
-                            <i class="fas fa-laptop-code"></i>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Document sans titre</h5>
-                            <p class="card-text">Rapport sur l'apprentissage du code avec des exercices pratiques.</p>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#projectModal2">
-                                Voir les détails
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <!-- Project 3 -->
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="project-card card">
-                        <div class="project-icon">
-                            <i class="fas fa-briefcase"></i>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Projet Portfolio</h5>
-                            <p class="card-text">Création de mon portfolio personnel avec interface d'administration.</p>
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#projectModal3">
-                                Voir les détails
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Experience Section -->
-    <section id="experience">
-        <div class="container">
-            <h2 class="section-title">Mon parcours</h2>
-            <div class="timeline">
-                <!-- Experience 1 -->
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-date">06-08/2025</div>
-                    <div class="timeline-content">
-                        <h5>Employé polyvalent - Action Manosque</h5>
-                        <p>Gestion de caisse et mise en rayon dans un environnement de vente au détail</p>
-                    </div>
-                </div>
-                <!-- Experience 2 -->
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-date">08/2024</div>
-                    <div class="timeline-content">
-                        <h5>Serveur - Restaurant Le Relais, Moustier Sainte Marie</h5>
-                        <p>Service en salle et au bar avec gestion des commandes et relation client</p>
-                    </div>
-                </div>
-                <!-- Experience 3 -->
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-date">08/2023</div>
-                    <div class="timeline-content">
-                        <h5>Serveur - Restaurant Le Relais, Moustier Sainte Marie</h5>
-                        <p>Service en salle et au bar dans un établissement touristique renommé</p>
-                    </div>
-                </div>
-                <!-- Experience 4 -->
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-date">07/2022</div>
-                    <div class="timeline-content">
-                        <h5>Serveur - Restaurant Le Relais, Moustier Sainte Marie</h5>
-                        <p>Première expérience dans le service en salle en période estivale</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="bg-light">
-        <div class="container">
-            <h2 class="section-title text-center">Contactez-moi</h2>
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <form class="contact-form">
-                        <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <input type="text" class="form-control" placeholder="Votre nom" required>
-                            </div>
-                            <div class="col-md-6 mb-4">
-                                <input type="email" class="form-control" placeholder="Votre email" required>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <input type="text" class="form-control" placeholder="Sujet" required>
-                        </div>
-                        <div class="mb-4">
-                            <textarea class="form-control" rows="5" placeholder="Votre message" required></textarea>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary btn-lg rounded-pill">Envoyer le message</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start">
-                    <h4>Délio Duchesne-Brajon</h4>
-                    <p>Étudiant en BTS S.I.O passionné par le développement web et les technologies innovantes.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <div class="social-links mb-3">
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-github"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
-                    <p>&copy; 2023 Tous droits réservés.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Back to Top Button -->
-    <a href="#" class="back-to-top"><i class="fas fa-arrow-up"></i></a>
-
-    <!-- Admin Panel Toggle -->
-    <div class="admin-toggle" id="adminToggle">
-        <span>Administration</span>
-    </div>
-
-    <!-- Admin Panel Overlay -->
-    <div class="admin-overlay" id="adminOverlay"></div>
-
-    <!-- Admin Panel -->
-    <div class="admin-panel" id="adminPanel">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3>Administration</h3>
-            <button type="button" class="btn-close" id="closeAdmin"></button>
-        </div>
-        
-        <div class="mb-3">
-            <label for="adminPassword" class="form-label">Mot de passe administrateur</label>
-            <input type="password" class="form-control" id="adminPassword" placeholder="Entrez le mot de passe">
-            <button class="btn btn-primary mt-2" id="loginAdmin">Se connecter</button>
-        </div>
-        
-        <div id="adminContent" style="display: none;">
-            <div class="admin-section">
-                <h5>Section À propos</h5>
-                <div class="mb-3">
-                    <label class="form-label">Description personnelle</label>
-                    <textarea class="form-control" id="aboutText" rows="4">Je suis actuellement étudiant en BTS Services Informatiques aux Organisations (S.I.O) au lycée Dominique Villars à Gap, avec une option en solutions logicielles et applications métiers.
-
-J'ai précédemment effectué une première année de droit à Marseille et obtenu un baccalauréat général avec des spécialités en Sciences Économiques et Sociales, Mathématiques, et Histoire-Géographie, Géopolitique et Sciences Politiques.
-
-Passionné par les nouvelles technologies et le développement web, je cherche constamment à améliorer mes compétences et à relever de nouveaux défis techniques.</textarea>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Nom</label>
-                            <input type="text" class="form-control" id="aboutName" value="Délio Duchesne-Brajon">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Ville</label>
-                            <input type="text" class="form-control" id="aboutCity" value="Gap, France">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Âge</label>
-                            <input type="text" class="form-control" id="aboutAge" value="20 ans">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Diplôme</label>
-                            <input type="text" class="form-control" id="aboutDiploma" value="Baccalauréat Général">
-                        </div>
-                    </div>
-                </div>
-                <button class="btn btn-sm btn-success" id="saveAbout">Enregistrer les modifications</button>
-            </div>
-            
-            <div class="admin-section">
-                <h5>Section Compétences</h5>
-                <div id="skillsContainer">
-                    <!-- Skills will be populated here -->
-                </div>
-                <button class="btn btn-sm btn-primary mt-2" id="addSkill">+ Ajouter une compétence</button>
-                <button class="btn btn-sm btn-success mt-2" id="saveSkills">Enregistrer les compétences</button>
-            </div>
-            
-            <div class="admin-section">
-                <h5>Section Projets</h5>
-                <div class="mb-3">
-                    <label class="form-label">Titre du projet</label>
-                    <input type="text" class="form-control" id="projectTitle" value="Projet BTS S.I.O">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Description du projet</label>
-                    <textarea class="form-control" id="projectDescription" rows="3">Développement d'une application de gestion pour mon projet de BTS S.I.O.</textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Lien du projet</label>
-                    <input type="text" class="form-control" id="projectLink" value="https://docs.google.com/document/d/1pvv0SphlzQTbiNT3qDrTm86kh2ErOPhSCuC1TdndKJ4/edit?usp=sharing">
-                </div>
-                <button class="btn btn-sm btn-success" id="saveProject">Enregistrer le projet</button>
-            </div>
-            
-            <div class="admin-section">
-                <h5>Section Expérience</h5>
-                <div id="experienceContainer">
-                    <!-- Experience items will be populated here -->
-                </div>
-                <button class="btn btn-sm btn-primary mt-2" id="addExperience">+ Ajouter une expérience</button>
-                <button class="btn btn-sm btn-success mt-2" id="saveExperience">Enregistrer les expériences</button>
-            </div>
-            
-            <div class="admin-section">
-                <h5>Comptes rendus</h5>
-                <div class="mb-3">
-                    <label class="form-label">Nouveau compte rendu</label>
-                    <input type="text" class="form-control mb-2" id="reportTitle" placeholder="Titre du compte rendu">
-                    <textarea class="form-control" id="reportContent" rows="3" placeholder="Contenu du compte rendu"></textarea>
-                </div>
-                <button class="btn btn-sm btn-primary" id="addReport">Ajouter le compte rendu</button>
-                
-                <div class="mt-3">
-                    <h6>Comptes rendus existants</h6>
-                    <div id="reportsList">
-                        <!-- Reports will be listed here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Project Modals -->
-    <!-- Modal 1 -->
-    <div class="modal fade" id="projectModal1" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Compte rendu TP n°2</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="project-icon mb-4">
-                        <i class="fas fa-file-pdf"></i>
-                    </div>
-                    <p>Compte rendu du TP Portfolio réalisé dans le cadre du BTS SIO.</p>
-                    <p><strong>Lien du document :</strong> <a href="https://drive.google.com/file/d/1pvv0SphlzQTbiNT3qDrTm86kh2ErOPhSCuC1TdndKJ4/view?usp=sharing" target="_blank">Compte rendu TP n°2</a></p>
-                    <p><strong>Contenu :</strong></p>
-                    <ul>
-                        <li>Introduction au projet portfolio</li>
-                        <li>Problèmes rencontrés et solutions</li>
-                        <li>Résultats obtenus</li>
-                        <li>Impressions personnelles sur le projet</li>
-                    </ul>
-                    <p>Ce document présente le travail réalisé lors de la création de mon portfolio personnel.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                    <a href="https://drive.google.com/file/d/1pvv0SphlzQTbiNT3qDrTm86kh2ErOPhSCuC1TdndKJ4/view?usp=sharing" target="_blank" class="btn btn-primary">Voir le document</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal 2 -->
-    <div class="modal fade" id="projectModal2" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Document sans titre</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="project-icon mb-4">
-                        <i class="fas fa-laptop-code"></i>
-                    </div>
-                    <p>Rapport sur l'apprentissage du code avec des exercices pratiques.</p>
-                    <p><strong>Lien du document :</strong> <a href="https://drive.google.com/file/d/1pvv0SphlzQTbiNT3qDrTm86kh2ErOPhSCuC1TdndKJ4/view?usp=sharing" target="_blank">Document sans titre</a></p>
-                    <p><strong>Contenu :</strong></p>
-                    <ul>
-                        <li>Contexte de l'apprentissage</li>
-                        <li>Mise en œuvre des exercices</li>
-                        <li>Codage et résolution de problèmes</li>
-                        <li>Conclusion sur l'expérience</li>
-                    </ul>
-                    <p>Ce document présente mon apprentissage des bases de la programmation à travers des exercices pratiques.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                    <a href="https://drive.google.com/file/d/1pvv0SphlzQTbiNT3qDrTm86kh2ErOPhSCuC1TdndKJ4/view?usp=sharing" target="_blank" class="btn btn-primary">Voir le document</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal 3 -->
-    <div class="modal fade" id="projectModal3" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Projet Portfolio</h5>
-                    <button type="
+                            <h5 class
