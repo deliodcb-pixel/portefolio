@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veille technologique — IA & Santé | Délio Duchesne-Brajon</title>
+<meta name="description" content="Veille technologique de Délio Duchesne-Brajon (BTS SIO SLAM) sur l'intelligence artificielle appliquée à la santé et à la médecine.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%233654ff'/%3E%3Cstop offset='1' stop-color='%23ff7a45'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='url(%23g)'/%3E%3Ctext x='50' y='69' font-size='56' font-family='Arial,sans-serif' font-weight='800' fill='white' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --bg-soft:#f6f7f9; --surface:#ffffff;
+  --ink:#0b0c0f; --ink-dim:#5b6069;
+  --line:#e7e8ec; --line-soft:#eef0f3;
+  --accent:#3654ff; --accent-2:#ff7a45; --accent-rgb:54,84,255;
+  --shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px -10px rgba(16,24,40,.12);
+  --shadow-lg:0 20px 48px -14px rgba(16,24,40,.22);
+  --radius:16px; --radius-sm:10px;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --display:'Space Grotesk',var(--sans);
+  --mono:'JetBrains Mono',monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b0c10; --bg-soft:#111319; --surface:#15171e;
+    --ink:#f3f4f6; --ink-dim:#9aa0ab;
+    --line:#24262e; --line-soft:#1c1e25;
+    --shadow:0 1px 2px rgba(0,0,0,.35), 0 8px 24px -10px rgba(0,0,0,.5);
+    --shadow-lg:0 24px 56px -16px rgba(0,0,0,.65);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b0c10; --bg-soft:#111319; --surface:#15171e;
+  --ink:#f3f4f6; --ink-dim:#9aa0ab;
+  --line:#24262e; --line-soft:#1c1e25;
+  --shadow:0 1px 2px rgba(0,0,0,.35), 0 8px 24px -10px rgba(0,0,0,.5);
+  --shadow-lg:0 24px 56px -16px rgba(0,0,0,.65);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+html,body{max-width:100%; overflow-x:hidden;}
+body{background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.6; transition:background .3s ease,color .3s ease;}
+::selection{background:var(--accent); color:#fff;}
+a{color:inherit; text-decoration:none;}
+ul{list-style:none;}
+img{max-width:100%; display:block;}
+h1,h2,h3{font-family:var(--display); letter-spacing:-0.01em; color:var(--ink);}
+.ico{width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; vertical-align:-3px; flex:none;}
+.ico.filled{fill:currentColor; stroke:none;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important;}
+}
+
+.wrap{max-width:1160px; margin:0 auto; padding:0 24px;}
+section{padding:90px 0; position:relative;}
+.reveal{opacity:0; transform:translateY(18px); transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);}
+.reveal.in{opacity:1; transform:translateY(0);}
+.accent-text{color:var(--accent);}
+.grad-text{background:linear-gradient(100deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+
+.blob{position:absolute; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; opacity:.16;}
+
+.eyebrow{display:flex; align-items:baseline; gap:12px; font-family:var(--display); font-weight:700; font-size:.78rem; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:18px;}
+.eyebrow .num{font-size:1.7rem; font-weight:700; color:transparent; -webkit-text-stroke:1.2px var(--line); letter-spacing:0; text-transform:none;}
+.h2{font-size:clamp(1.9rem,3.4vw,2.6rem); font-weight:700; margin-bottom:16px; line-height:1.15;}
+.lede{color:var(--ink-dim); max-width:640px; margin-bottom:48px; font-size:1.02rem; line-height:1.65;}
+
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); transition:box-shadow .25s ease, transform .25s ease, border-color .25s ease; position:relative; overflow:hidden;}
+.card:hover{box-shadow:var(--shadow-lg); transform:translateY(-4px); border-color:rgba(var(--accent-rgb),.3);}
+.pad{padding:30px;}
+.card::before{
+  content:''; position:absolute; top:0; left:-60%; width:34%; height:100%;
+  background:linear-gradient(75deg, transparent, rgba(var(--accent-rgb),.16), rgba(255,255,255,.22), rgba(var(--accent-rgb),.16), transparent);
+  transform:skewX(-20deg); pointer-events:none; z-index:1;
+}
+.card:hover::before{ left:130%; transition:left .85s cubic-bezier(.16,1,.3,1); }
+
+.btn{display:inline-flex; align-items:center; gap:9px; font-family:var(--sans); font-weight:600; font-size:.94rem; padding:14px 24px; border-radius:99px; cursor:pointer; border:1px solid transparent; transition:all .22s ease; white-space:nowrap;}
+.btn-primary{background:var(--ink); color:var(--bg);}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:var(--shadow-lg);}
+.btn-ghost{background:var(--surface); color:var(--ink); border-color:var(--line);}
+.btn-ghost:hover{border-color:var(--ink); transform:translateY(-2px);}
+
+/* NAV */
+.navwrap{position:fixed; top:16px; left:0; right:0; z-index:200; display:flex; justify-content:center; padding:0 16px;}
+.navpill{display:flex; align-items:center; gap:6px; width:100%; max-width:900px; justify-content:space-between;
+  background:rgba(255,255,255,.72); backdrop-filter:blur(18px) saturate(180%); -webkit-backdrop-filter:blur(18px) saturate(180%);
+  border:1px solid var(--line); border-radius:99px; padding:8px 10px 8px 14px; box-shadow:var(--shadow); transition:background .3s ease, border-color .3s ease;}
+:root[data-theme="dark"] .navpill{background:rgba(17,19,25,.72);}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .navpill{background:rgba(17,19,25,.72);} }
+.brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:.92rem; color:var(--ink);}
+.mark{width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff; font-family:var(--display); font-weight:700; font-size:.95rem; display:flex; align-items:center; justify-content:center; flex:none;}
+.brand .bname{display:none;}
+@media (min-width:640px){ .brand .bname{display:inline;} }
+.navlinks{display:flex; align-items:center; gap:2px;}
+.navlinks a{font-size:.86rem; font-weight:500; padding:9px 14px; border-radius:99px; color:var(--ink-dim); transition:all .2s ease;}
+.navlinks a:hover, .navlinks a.on{color:var(--ink); background:var(--bg-soft);}
+.navactions{display:flex; align-items:center; gap:8px;}
+.iconbtn{width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:var(--surface); color:var(--ink); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s ease; flex:none;}
+.iconbtn:hover{border-color:var(--ink);}
+.iconbtn .i-moon{display:none;}
+:root[data-theme="dark"] .iconbtn .i-sun{display:none;}
+:root[data-theme="dark"] .iconbtn .i-moon{display:block;}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .iconbtn .i-sun{display:none;}
+  :root:not([data-theme="light"]) .iconbtn .i-moon{display:block;}
+}
+.burger{display:none; width:36px; height:36px; border-radius:50%; border:1px solid var(--line); align-items:center; justify-content:center; background:var(--surface); color:var(--ink); cursor:pointer; flex:none;}
+
+@media (max-width:860px){
+  .navlinks{position:fixed; top:74px; left:16px; right:16px; flex-direction:column; align-items:stretch; gap:2px;
+    background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:10px; box-shadow:var(--shadow-lg);
+    transform:scaleY(0); opacity:0; transform-origin:top; pointer-events:none; transition:all .22s ease;}
+  .navlinks.open{transform:scaleY(1); opacity:1; pointer-events:auto;}
+  .navlinks a{text-align:center; padding:12px;}
+  .burger{display:flex;}
+}
+
+/* BENTO GRID */
+.bento{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+.bento .c1{grid-column:span 1;} .bento .c2{grid-column:span 2;} .bento .c3{grid-column:span 3;} .bento .c4{grid-column:span 4;}
+@media (max-width:860px){ .bento{grid-template-columns:repeat(2,1fr);} .bento .c2,.bento .c3,.bento .c4{grid-column:span 2;} }
+@media (max-width:560px){ .bento{grid-template-columns:1fr;} .bento .c1,.bento .c2,.bento .c3,.bento .c4{grid-column:span 1;} }
+
+/* HERO */
+.vhero{padding-top:160px; padding-bottom:50px; overflow:hidden;}
+.pill-avail{display:inline-flex; align-items:center; gap:9px; font-size:.82rem; font-weight:600; padding:8px 16px 8px 12px; border:1px solid var(--line); border-radius:99px; margin-bottom:26px; color:var(--ink-dim); background:var(--surface); box-shadow:var(--shadow);}
+.dot{width:7px; height:7px; border-radius:50%; background:#22c55e; flex:none; position:relative;}
+.dot::after{content:''; position:absolute; inset:-4px; border-radius:50%; background:#22c55e; opacity:.35; animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1); opacity:.35;} 50%{transform:scale(1.7); opacity:0;}}
+.h1{font-size:clamp(2.1rem,4.6vw,3.2rem); font-weight:700; line-height:1.1; margin-bottom:18px; letter-spacing:-0.02em;}
+.lede-p{color:var(--ink-dim); max-width:680px; margin-bottom:22px; font-size:1.03rem; line-height:1.7;}
+.hero-meta{display:flex; gap:22px; flex-wrap:wrap; font-size:.86rem; color:var(--ink-dim); font-weight:500;}
+.hero-meta span{display:flex; align-items:center; gap:7px;}
+.hero-meta .ico{color:var(--accent);}
+.backlink{display:inline-flex; align-items:center; gap:8px; font-size:.86rem; font-weight:600; color:var(--ink-dim); margin-bottom:28px;}
+.backlink:hover{color:var(--accent);}
+.backlink .ico{width:15px;height:15px;}
+
+.stattile{text-align:center;}
+.stattile b{display:block; font-family:var(--display); font-size:2.1rem; font-weight:700;}
+.stattile span{color:var(--ink-dim); font-size:.86rem; margin-top:4px; display:block;}
+
+/* MONTH GROUPS / TIMELINE */
+.monthlist{max-width:900px;}
+.monthgroup{border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); margin-bottom:16px; overflow:hidden; box-shadow:var(--shadow); transition:box-shadow .25s ease;}
+.monthgroup[open]{box-shadow:var(--shadow-lg);}
+.monthgroup summary{list-style:none; cursor:pointer; padding:22px 28px; display:flex; align-items:center; gap:14px; font-family:var(--display); font-weight:700; font-size:1.08rem; -webkit-tap-highlight-color:transparent;}
+.monthgroup summary::-webkit-details-marker{display:none;}
+.monthgroup summary .mcount{font-family:var(--sans); font-weight:600; font-size:.78rem; color:var(--ink-dim); background:var(--bg-soft); padding:5px 12px; border-radius:99px; margin-left:auto;}
+.monthgroup summary .chev{transition:transform .3s cubic-bezier(.16,1,.3,1); color:var(--ink-dim); flex:none;}
+.monthgroup[open] summary .chev{transform:rotate(180deg);}
+.monthgroup summary:hover{color:var(--accent);}
+.tlwrap{padding:4px 28px 32px;}
+
+.tl{position:relative; padding-left:34px; max-width:820px;}
+.tl::before{content:''; position:absolute; left:5px; top:8px; bottom:8px; width:2px; background:var(--line);}
+.tlitem{position:relative; padding-bottom:26px;}
+.tlitem:last-child{padding-bottom:0;}
+.tlmark{position:absolute; left:-34px; top:6px; width:12px; height:12px; border-radius:50%; background:var(--surface); border:3px solid var(--accent);}
+.tldate{font-size:.74rem; color:var(--accent); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; font-weight:700;}
+.tlcard{padding:20px 22px;}
+.vhead{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
+.toolpill{display:inline-flex; align-items:center; font-size:.7rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:5px 12px; border-radius:99px; background:rgba(var(--accent-rgb),.08); border:1px solid rgba(var(--accent-rgb),.18); color:var(--accent); white-space:nowrap;}
+.toolpill.todo{background:transparent; border:1.5px dashed var(--line); color:var(--ink-dim);}
+.plink{font-size:.8rem; color:var(--ink-dim); display:inline-flex; align-items:center; gap:5px; font-weight:600;}
+.plink:hover{color:var(--accent);}
+.plink .ico{width:12px; height:12px;}
+.vfait{color:var(--ink); font-size:.95rem; line-height:1.62;}
+.vparam{margin-top:15px; border:1.5px dashed var(--line); border-radius:12px; padding:13px 15px; display:flex; align-items:center; gap:10px; color:var(--ink-dim); font-size:.8rem; background:var(--bg-soft); line-height:1.4;}
+.vparam .ico{color:var(--ink-dim); opacity:.75; flex:none; width:18px; height:18px;}
+
+.totop{position:fixed; bottom:26px; right:26px; width:46px; height:46px; border:1px solid var(--line); background:var(--surface);
+  border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:150; color:var(--ink); box-shadow:var(--shadow);
+  opacity:0; visibility:hidden; transform:translateY(8px); transition:all .25s ease;}
+.totop.show{opacity:1; visibility:visible; transform:translateY(0);}
+.totop:hover{border-color:var(--ink); transform:translateY(-3px);}
+
+#scrollbar{position:fixed; top:0; left:0; right:0; height:3px; z-index:250; background:transparent; pointer-events:none;}
+#scrollbar i{display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--accent-2)); font-style:normal; box-shadow:0 0 10px rgba(var(--accent-rgb),.5);}
+
+footer{border-top:1px solid var(--line); padding:40px 0; background:var(--bg-soft); margin-top:40px;}
+.fbottom{display:flex; justify-content:space-between; flex-wrap:wrap; gap:14px; font-size:.84rem; color:var(--ink-dim); align-items:center;}
+
+/* CUSTOM CURSOR */
+@media (pointer:fine){
+  html.has-cursor *{ cursor:none; }
+  html.has-cursor input, html.has-cursor textarea{ cursor:text; }
+}
+#cursor-dot{position:fixed; top:0; left:0; width:7px; height:7px; border-radius:50%; background:var(--ink); pointer-events:none; z-index:9999; transform:translate(-50%,-50%); mix-blend-mode:difference; opacity:0; transition:opacity .2s ease, width .3s cubic-bezier(.16,1,.3,1), height .3s cubic-bezier(.16,1,.3,1);}
+#cursor-ring{position:fixed; top:0; left:0; width:38px; height:38px; border-radius:50%; border:1.5px solid var(--ink); pointer-events:none; z-index:9998; transform:translate(-50%,-50%) rotate(0deg); will-change:transform; opacity:0; mix-blend-mode:difference; background:transparent;
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+  transition:opacity .2s ease, width .4s cubic-bezier(.34,1.56,.64,1), height .4s cubic-bezier(.34,1.56,.64,1), border-color .3s ease, background .3s ease, box-shadow .3s ease;}
+#cursor-ring::before{content:''; position:absolute; inset:-40%; background:conic-gradient(from 0deg, var(--accent), var(--accent-2), var(--accent)); opacity:0; transition:opacity .3s ease; animation:cursorspin 3.4s linear infinite;}
+@keyframes cursorspin{to{transform:rotate(360deg);}}
+#cursor-label{position:relative; z-index:1; font-size:.72rem; font-weight:700; letter-spacing:.02em; color:#fff; font-family:var(--sans); mix-blend-mode:normal; opacity:0; transform:scale(.6); transition:opacity .25s ease .05s, transform .3s cubic-bezier(.34,1.56,.64,1) .05s; white-space:nowrap; pointer-events:none;}
+
+html.has-cursor #cursor-ring, html.has-cursor #cursor-dot{opacity:1;}
+html.cursor-hidden #cursor-ring, html.cursor-hidden #cursor-dot{opacity:0;}
+
+html.cursor-hover #cursor-dot{width:0; height:0; opacity:0;}
+html.cursor-hover #cursor-ring{width:88px; height:88px; border-color:transparent; mix-blend-mode:normal; background:var(--ink); box-shadow:0 16px 40px -12px rgba(0,0,0,.35);}
+html.cursor-hover #cursor-ring::before{opacity:.9;}
+html.cursor-hover #cursor-label{opacity:1; transform:scale(1);}
+
+html.cursor-hover.cursor-plain #cursor-ring{width:60px; height:60px; background:var(--ink);}
+html.cursor-hover.cursor-plain #cursor-ring::before{opacity:.55;}
+
+@media (prefers-reduced-motion: reduce){ #cursor-ring::before{animation:none;} }
+
+#cursor-trail{position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:9997; opacity:.9;}
+
+@media (pointer:fine){
+  .card:not(.no-tilt){transform-style:preserve-3d; transition:transform .5s cubic-bezier(.16,1,.3,1), box-shadow .25s ease, border-color .25s ease;}
+  .card:not(.no-tilt).tilting{transition:box-shadow .25s ease, border-color .25s ease;}
+}
+</style>
+</head>
+<body>
+
+<div id="scrollbar"><i id="scrollbar-fill"></i></div>
+<canvas id="cursor-trail"></canvas>
+<div id="cursor-ring"><span id="cursor-label"></span></div>
+<div id="cursor-dot"></div>
+
+<svg style="display:none">
+  <symbol id="i-menu" viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><polyline points="6 15 12 9 18 15"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="11 6 5 12 11 18"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.3"/></symbol>
+  <symbol id="i-cap" viewBox="0 0 24 24"><path d="M12 3L2 8l10 5 8-4v6"/><path d="M6 10.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-5.5"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.4M12 19.6V22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2 12h2.4M19.6 12H22M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h1.2l1-1.6A2 2 0 0 1 9.9 3.5h4.2a2 2 0 0 1 1.7.9l1 1.6H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.4"/></symbol>
+</svg>
+
+<div class="navwrap">
+  <nav class="navpill" id="hdr">
+    <a href="index.html" class="brand"><span class="mark">D</span><span class="bname">Délio Duchesne-Brajon</span></a>
+    <ul class="navlinks" id="navlinks">
+      <li><a href="index.html" class="navlink">Portfolio</a></li>
+      <li><a href="index.html#projets" class="navlink">Projets</a></li>
+      <li><a href="index.html#contact" class="navlink">Contact</a></li>
+    </ul>
+    <div class="navactions">
+      <button class="iconbtn" id="themeToggle" aria-label="Changer de thème">
+        <svg class="ico i-sun"><use href="#i-sun"/></svg>
+        <svg class="ico i-moon"><use href="#i-moon"/></svg>
+      </button>
+      <button class="burger" id="burger" aria-label="Menu"><svg class="ico"><use href="#i-menu"/></svg></button>
+    </div>
+  </nav>
+</div>
+
+<!-- HERO -->
+<section class="vhero">
+  <div class="blob" style="width:520px; height:520px; top:-160px; left:-160px; background:var(--accent);"></div>
+  <div class="blob" style="width:460px; height:460px; top:20px; right:-160px; background:var(--accent-2);"></div>
+  <div class="wrap">
+    <a href="index.html" class="backlink reveal" data-cursor="Retour"><svg class="ico"><use href="#i-arrow-left"/></svg> Retour au portfolio</a>
+    <span class="pill-avail reveal"><span class="dot"></span> Mise à jour le 07/09/2026</span>
+    <h1 class="h1 reveal">Veille technologique<br><span class="grad-text">Intelligence artificielle &amp; Santé</span></h1>
+    <p class="lede-p reveal">Suivi régulier de l'actualité sur l'intelligence artificielle appliquée à la médecine et à la santé, dans le cadre du BTS SIO SLAM — une information relevée toutes les 1 à 2 semaines depuis le 11/11/2025.</p>
+    <div class="hero-meta reveal">
+      <span><svg class="ico"><use href="#i-cap"/></svg> BTS SIO — SLAM</span>
+      <span><svg class="ico"><use href="#i-pin"/></svg> Gap, France</span>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section style="padding-top:0; padding-bottom:40px;">
+  <div class="wrap">
+    <div class="bento">
+      <div class="c1 card pad reveal stattile">
+        <b class="grad-text">37</b>
+        <span>informations suivies</span>
+      </div>
+      <div class="c1 card pad reveal stattile">
+        <b class="grad-text">11</b>
+        <span>mois de veille</span>
+      </div>
+      <div class="c1 card pad reveal stattile">
+        <b class="grad-text">25</b>
+        <span>sources différentes</span>
+      </div>
+      <div class="c1 card pad reveal stattile">
+        <b class="grad-text">7-14j</b>
+        <span>entre deux relevés</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section style="padding-top:0;">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="num">••</span> Chronologie</div>
+    <h2 class="h2 reveal">Informations relevées, mois par mois</h2>
+    <p class="lede reveal">Cliquez sur un mois pour dérouler le détail. Chaque entrée garde un espace réservé pour la capture d'écran du paramétrage de l'outil de recherche utilisé (mots-clés, filtres, alertes) — à compléter au fil des relevés.</p>
+
+    <div class="monthlist">
+      <details class="monthgroup reveal" open>
+        <summary>Septembre 2026 <svg class="ico chev"><use href="#i-chevron"/></svg><span class="mcount">2 infos</span></summary>
+        <div class="tlwrap"><div class="tl">
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">01/09/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://www.businesswire.com/news/home/20260901360645/en/Vara-Receives-World-First-CE-Certification-for-Autonomous-AI-in-Breast-Cancer-Screening" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">BusinessWire <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">La medtech allemande Vara obtient la première certification CE au monde pour un système d&#x27;IA autonome de dépistage du cancer du sein, capable de classer une mammographie comme normale sans relecture par un radiologue.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">07/09/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://insilico.com/news/rnt0709261-rentosertib-proteomic-aging-clocks" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">Insilico Medicine <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Insilico Medicine publie dans Nature Biotechnology les résultats d&#x27;un essai sur le rentosertib, médicament dont la cible et la molécule ont toutes deux été conçues par IA, montrant un rajeunissement biologique de 3 à 4 ans.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+        </div></div>
+      </details>
+      <details class="monthgroup reveal" open>
+        <summary>Août 2026 <svg class="ico chev"><use href="#i-chevron"/></svg><span class="mcount">4 infos</span></summary>
+        <div class="tlwrap"><div class="tl">
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">04/08/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://news.mit.edu/2026/medical-ai-assistance-benefits-vary-based-on-user-expertise-0804" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">MIT News <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Une étude du MIT montre qu&#x27;une IA de diagnostic dermatologique profite surtout aux non-experts, qui lui font trop confiance, alors que les cliniciens expérimentés résistent mieux à ses erreurs.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">11/08/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://www.prnewswire.com/news-releases/leica-biosystems-enables-faster-cancer-diagnoses-through-multiple-digital-pathology-fda-clearances-including-industry-first-ai-assisted-quality-control-software-302848503.html" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">PR Newswire <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">La FDA autorise Aperio iQC DX de Leica Biosystems, premier logiciel de contrôle qualité assisté par IA en pathologie numérique : jusqu&#x27;à 24 % d&#x27;artefacts détectés en plus, temps de relecture réduit de 69 %.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">17/08/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://www.nature.com/articles/s41551-026-01764-x" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">Nature Biomedical Engineering <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Une équipe de recherche internationale publie ConceptCLIP dans Nature Biomedical Engineering, un modèle d&#x27;IA biomédical explicable entraîné sur 23 millions de triplets image-texte-concept, validé sur 78 jeux de données.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">20/08/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2853099" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">JAMA Network Open <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Une étude de Stanford publiée dans JAMA Network Open montre qu&#x27;un outil d&#x27;IA intégré au dossier médical électronique repère les patients chirurgicaux à risque avec 94 % de sensibilité et 78 % de spécificité.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+        </div></div>
+      </details>
+      <details class="monthgroup reveal">
+        <summary>Juillet 2026 <svg class="ico chev"><use href="#i-chevron"/></svg><span class="mcount">3 infos</span></summary>
+        <div class="tlwrap"><div class="tl">
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">04/07/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://www.england.nhs.uk/2026/07/nhs-accelerates-artificial-intelligence-rollout-to-cut-waiting-times-and-improve-care-for-millions/" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">NHS England <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Le NHS anglais généralise les logiciels de prise de notes par IA aux urgences : à l&#x27;hôpital St George&#x27;s, le temps gagné permet à chaque soignant de voir un patient supplémentaire par service.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">15/07/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://www.who.int/europe/fr/news/item/15-07-2026-statement---govern-ai-in-health-before-the-gaps-become-irreversible" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">OMS Europe <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">L&#x27;OMS Europe alerte : seuls 8 % des pays européens disposent d&#x27;une stratégie dédiée à l&#x27;IA en santé, alors que près des deux tiers l&#x27;utilisent déjà pour le diagnostic.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">23/07/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://techcrunch.com/2026/07/23/openai-makes-chatgpt-health-available-to-all-u-s-users/" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">TechCrunch <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">OpenAI déploie ChatGPT Health pour tous les utilisateurs américains, une fonction reliée aux dossiers médicaux qui traite désormais 300 millions de requêtes de santé par semaine.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+        </div></div>
+      </details>
+      <details class="monthgroup reveal">
+        <summary>Juin 2026 <svg class="ico chev"><use href="#i-chevron"/></svg><span class="mcount">4 infos</span></summary>
+        <div class="tlwrap"><div class="tl">
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">02/06/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://news.microsoft.com/source/2026/06/02/mayo-clinic-and-microsoft-collaborate-to-develop-a-frontier-ai-model-for-healthcare/" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">Microsoft (communiqué) <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Mayo Clinic et Microsoft annoncent un partenariat pour développer un modèle d&#x27;IA « frontière » dédié à la santé, dont la propriété reviendra à Mayo Clinic et qui sera déployé via la plateforme Azure Foundry.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">09/06/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://www.rsna.org/news/2026/june/ai-flags-breast-cancer-early" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">RSNA <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Une étude suédoise du Karolinska University Hospital (revue Radiology, plus de 88 000 mammographies) montre qu&#x27;une IA détecte des signes de cancer du sein jusqu&#x27;à 6 ans avant le diagnostic dans environ 20 % des cas confirmés.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">16/06/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://www.cnews.fr/france/2026-06-16/alliance-sante-ia-quel-est-ce-projet-dhopital-augmente-qui-doit-revolutionner-la" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">CNews <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Le CHU de Montpellier lance le projet « Alliance Santé IA », un hôpital augmenté par l&#x27;IA financé à hauteur de 14,9 millions d&#x27;euros dans le cadre du plan France 2030, testé par 200 utilisateurs pilotes.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">23/06/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://www.nyp.org/news/ai-tool-developed-at-newyork-presbyterian-and-columbia-to-detect-hidden-heart-disease-receives-fda-approval" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">NewYork-Presbyterian <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">L&#x27;IA EchoNext (NewYork-Presbyterian/Columbia) obtient l&#x27;autorisation de la FDA pour détecter les maladies cardiaques structurelles via un simple ECG, avec 77 % de précision contre 64 % pour les cardiologues seuls.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+        </div></div>
+      </details>
+      <details class="monthgroup reveal">
+        <summary>Mai 2026 <svg class="ico chev"><use href="#i-chevron"/></svg><span class="mcount">2 infos</span></summary>
+        <div class="tlwrap"><div class="tl">
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">03/05/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://techcrunch.com/2026/05/03/in-harvard-study-ai-offered-more-accurate-diagnoses-than-emergency-room-doctors/" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">TechCrunch <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Une étude de Harvard Medical School et du Beth Israel Deaconess Medical Center (revue Science) montre que le modèle d&#x27;IA o1 d&#x27;OpenAI pose un diagnostic exact ou très proche dans 67 % des cas aux urgences, contre 55 % et 50 % pour deux médecins.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">12/05/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://www.nature.com/articles/s41467-026-72960-1" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">Nature Communications <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Une étude de la Mayo Clinic publiée dans Nature Communications montre qu&#x27;un outil d&#x27;IA prédisant les admissions hospitalières depuis les urgences réduit la durée médiane de passage des patients de 12 minutes (-4 %) sur plus de 54 000 visites.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+        </div></div>
+      </details>
+      <details class="monthgroup reveal">
+        <summary>Avril 2026 <svg class="ico chev"><use href="#i-chevron"/></svg><span class="mcount">3 infos</span></summary>
+        <div class="tlwrap"><div class="tl">
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">08/04/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://anumana.ai/anumana-receives-first-and-only-fda-clearance-for-ecg-ai-cardiac-amyloidosis-algorithm-using-a-standard-12-lead-ecg/" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">Anumana (communiqué) <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">La FDA autorise l&#x27;algorithme ECG-IA d&#x27;Anumana, premier outil détectant l&#x27;amylose cardiaque via un simple électrocardiogramme à 12 dérivations, avec 78,9 % de sensibilité et 91,2 % de spécificité sur 25 525 patients.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">20/04/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://www.who.int/europe/news/item/20-04-2026-new-who-europe-report-provides-first-ever-snapshot-of-ai-in-health-care-across-european-union-member-states" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">OMS Europe <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Un rapport de l&#x27;OMS Europe révèle que près des trois quarts des pays de l&#x27;Union européenne utilisent déjà des diagnostics médicaux assistés par IA.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">29/04/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://newsnetwork.mayoclinic.org/discussion/mayo-clinic-ai-detects-pancreatic-cancer-up-to-3-years-before-diagnosis-in-landmark-validation-study/" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">Mayo Clinic News Network <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Une étude de la Mayo Clinic montre que son IA REDMOD détecte un cancer du pancréas dans 73 % des cas, en moyenne 16 mois avant le diagnostic clinique.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+        </div></div>
+      </details>
+      <details class="monthgroup reveal">
+        <summary>Mars 2026 <svg class="ico chev"><use href="#i-chevron"/></svg><span class="mcount">3 infos</span></summary>
+        <div class="tlwrap"><div class="tl">
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">05/03/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Google Alert</span>
+            <a href="https://www.who.int/health-topics/artificial-intelligence" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">who.int <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">L&#x27;OMS rappelle que l&#x27;intelligence artificielle doit rester un outil d&#x27;aide à la décision et ne remplace pas les médecins.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans who.int.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">12/03/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://fortune.com/2026/03/12/microsoft-copilot-health-ai-medical-personal-health-data/" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">Fortune <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Microsoft lance Copilot Health, un assistant IA qui centralise les données de santé personnelles des utilisateurs à partir de plus de 50 000 prestataires de santé américains.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">24/03/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill todo">Outil à préciser</span>
+            <a href="https://news.mit.edu/2026/creating-humble-ai-0324" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">MIT News <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Des chercheurs du MIT présentent un cadre d&#x27;IA « humble » qui signale son incertitude dans les diagnostics médicaux au lieu de formuler des recommandations trop confiantes.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans l'outil de veille.</span>
+          </div>
+        </div>
+      </div>
+        </div></div>
+      </details>
+      <details class="monthgroup reveal">
+        <summary>Février 2026 <svg class="ico chev"><use href="#i-chevron"/></svg><span class="mcount">4 infos</span></summary>
+        <div class="tlwrap"><div class="tl">
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">03/02/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Syft</span>
+            <a href="https://www.reuters.com/business/healthcare-pharmaceuticals" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">reuters.com <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Plusieurs entreprises développent des systèmes d&#x27;IA capables d&#x27;assister les chirurgiens pendant certaines opérations.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans reuters.com.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">10/02/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Twitter</span>
+            <a href="https://www.nasa.gov/technology/artificial-intelligence" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">nasa.gov <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Des technologies d&#x27;IA développées pour l&#x27;espace sont aussi utilisées dans la recherche médicale pour analyser des données complexes.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans nasa.gov.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">17/02/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Google Alert</span>
+            <a href="https://www.weforum.org/artificial-intelligence-healthcare" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">weforum.org <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Les experts estiment que l&#x27;IA pourrait réduire les erreurs médicales en aidant à l&#x27;analyse des données cliniques.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans weforum.org.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">24/02/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Syft</span>
+            <a href="https://www.reuters.com/technology/ai-hospital-systems" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">reuters.com <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Certains hôpitaux utilisent des algorithmes d&#x27;IA pour organiser les flux de patients et améliorer la gestion des urgences.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans reuters.com.</span>
+          </div>
+        </div>
+      </div>
+        </div></div>
+      </details>
+      <details class="monthgroup reveal">
+        <summary>Janvier 2026 <svg class="ico chev"><use href="#i-chevron"/></svg><span class="mcount">4 infos</span></summary>
+        <div class="tlwrap"><div class="tl">
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">06/01/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Google Alert</span>
+            <a href="https://www.inserm.fr/dossier/intelligence-artificielle-et-sante" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">inserm.fr <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">L&#x27;INSERM explique que l&#x27;IA peut assister les médecins dans l&#x27;interprétation d&#x27;images médicales comme les scanners ou les IRM.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans inserm.fr.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">13/01/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Twitter</span>
+            <a href="https://www.reuters.com/technology/ai-medical-research" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">reuters.com <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Des chercheurs utilisent l&#x27;IA pour accélérer la découverte de nouveaux médicaments en analysant de grandes bases de données.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans reuters.com.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">20/01/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Syft</span>
+            <a href="https://www.mit.edu/news/artificial-intelligence-medicine" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">mit.edu <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Le MIT développe des modèles d&#x27;IA capables d&#x27;aider à prédire certaines maladies avant l&#x27;apparition des symptômes.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans mit.edu.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">27/01/2026</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Google Alert</span>
+            <a href="https://www.bbc.com/news/health" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">bbc.com <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">L&#x27;intelligence artificielle est utilisée dans certains hôpitaux pour analyser les radiographies et détecter plus rapidement des fractures.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans bbc.com.</span>
+          </div>
+        </div>
+      </div>
+        </div></div>
+      </details>
+      <details class="monthgroup reveal">
+        <summary>Décembre 2025 <svg class="ico chev"><use href="#i-chevron"/></svg><span class="mcount">5 infos</span></summary>
+        <div class="tlwrap"><div class="tl">
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">02/12/2025</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Google Alert</span>
+            <a href="https://www.who.int/fr/news-room/fact-sheets/detail/artificial-intelligence-in-health" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">who.int <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">L&#x27;OMS indique que l&#x27;intelligence artificielle peut améliorer le diagnostic médical et aider les médecins à analyser plus rapidement les données de santé.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans who.int.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">09/12/2025</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Syft</span>
+            <a href="https://www.reuters.com/technology/artificial-intelligence-healthcare" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">reuters.com <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Des hôpitaux utilisent l&#x27;IA pour analyser les scanners et détecter plus tôt certaines maladies pulmonaires.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans reuters.com.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">16/12/2025</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Twitter</span>
+            <a href="https://www.bbc.com/news/technology" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">bbc.com <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Des chercheurs expliquent que l&#x27;IA peut aider les radiologues à repérer certaines anomalies dans les images médicales plus rapidement.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans bbc.com.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">23/12/2025</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Google Alert</span>
+            <a href="https://www.weforum.org/agenda/2023/02/ai-healthcare-future" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">weforum.org <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">L&#x27;IA pourrait améliorer la médecine préventive en analysant de grandes bases de données de patients.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans weforum.org.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">30/12/2025</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Syft</span>
+            <a href="https://www.ibm.com/artificial-intelligence/healthcare" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">ibm.com <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Les systèmes d&#x27;IA peuvent analyser les dossiers médicaux pour aider les médecins à choisir les traitements les plus adaptés.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans ibm.com.</span>
+          </div>
+        </div>
+      </div>
+        </div></div>
+      </details>
+      <details class="monthgroup reveal">
+        <summary>Novembre 2025 <svg class="ico chev"><use href="#i-chevron"/></svg><span class="mcount">3 infos</span></summary>
+        <div class="tlwrap"><div class="tl">
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">11/11/2025</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Google</span>
+            <a href="https://www.inserm.fr/dossier/intelligence-artificielle-et-sante" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">inserm.fr <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">L&#x27;IA et le médecin collaborent pour analyser les symptômes, le médecin gardant la décision finale.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans inserm.fr.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">17/11/2025</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Syft</span>
+            <a href="https://medvasc.info/archives-blog/infarctus-du-myocarde-apport-de-l-ia" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">medvasc.info <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">L&#x27;IA prédit les infarctus du myocarde via IRM cardiaque avec une précision de 94,3 %.</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans medvasc.info.</span>
+          </div>
+        </div>
+      </div>
+      <div class="tlitem reveal">
+        <div class="tlmark"></div>
+        <div class="tldate">25/11/2025</div>
+        <div class="tlcard card veille-card">
+          <div class="vhead">
+            <span class="toolpill">Twitter</span>
+            <a href="https://nypost.com/2025/07/12/science/ai-trained-robot-completes-groundbreaking-gall-bladder-operation-with-100-success-the-future-is-bright/" target="_blank" rel="noopener" class="plink" data-cursor="Source ↗">nypost.com <svg class="ico"><use href="#i-arrow"/></svg></a>
+          </div>
+          <p class="vfait">Un robot chirurgical IA (SRT-H, Johns Hopkins) retire de façon autonome une vésicule biliaire sur un modèle porcin avec 100 % de réussite (8/8 essais).</p>
+          <div class="vparam">
+            <svg class="ico"><use href="#i-camera"/></svg>
+            <span>Paramétrage de recherche à ajouter — mots-clés, filtres, alertes utilisés dans nypost.com.</span>
+          </div>
+        </div>
+      </div>
+        </div></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fbottom">
+      <span>© <span id="year"></span> Délio Duchesne-Brajon — Veille technologique IA &amp; Santé</span>
+      <a href="index.html" class="btn btn-ghost magnetic" data-cursor="Portfolio" style="padding:9px 18px; font-size:.82rem;">← Retour au portfolio</a>
+    </div>
+  </div>
+</footer>
+
+<a href="#top" class="totop" id="totop" aria-label="Retour en haut"><svg class="ico"><use href="#i-up"/></svg></a>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Theme toggle ---------- */
+(function(){
+  let saved = null;
+  try{ saved = localStorage.getItem('ddb-theme-v2'); }catch(e){}
+  if (saved) document.documentElement.dataset.theme = saved;
+  const btn = document.getElementById('themeToggle');
+  btn.addEventListener('click', () => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const current = document.documentElement.dataset.theme || (prefersDark ? 'dark' : 'light');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try{ localStorage.setItem('ddb-theme-v2', next); }catch(e){}
+  });
+})();
+
+/* ---------- Header shadow + scroll progress + back-to-top ---------- */
+const hdr = document.getElementById('hdr');
+const totop = document.getElementById('totop');
+const scrollFill = document.getElementById('scrollbar-fill');
+function onScroll(){
+  hdr.style.boxShadow = window.scrollY > 20 ? 'var(--shadow-lg)' : '';
+  totop.classList.toggle('show', window.scrollY > 500);
+  const doc = document.documentElement;
+  const max = doc.scrollHeight - doc.clientHeight;
+  scrollFill.style.width = (max > 0 ? (doc.scrollTop / max) * 100 : 0) + '%';
+}
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+/* ---------- Mobile nav ---------- */
+const burger = document.getElementById('burger');
+const navlinks = document.getElementById('navlinks');
+burger.addEventListener('click', () => navlinks.classList.toggle('open'));
+navlinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navlinks.classList.remove('open')));
+
+/* ---------- Reveal on scroll ---------- */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); revealObs.unobserve(e.target); } });
+}, {threshold:.1});
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+/* ---------- Shared pointer tracking (feeds cursor + trail) ---------- */
+const CAN_HOVER = window.matchMedia('(pointer: fine)').matches && !reduceMotion;
+let MOUSE_X = window.innerWidth/2, MOUSE_Y = window.innerHeight/2;
+if (CAN_HOVER){
+  window.addEventListener('mousemove', e => { MOUSE_X = e.clientX; MOUSE_Y = e.clientY; }, {passive:true});
+}
+
+/* ---------- Custom reactive cursor ---------- */
+(function(){
+  if (!CAN_HOVER) return;
+  const ring = document.getElementById('cursor-ring');
+  const dot = document.getElementById('cursor-dot');
+  const label = document.getElementById('cursor-label');
+  const root = document.documentElement;
+  root.classList.add('has-cursor', 'cursor-hidden');
+
+  let rx = MOUSE_X, ry = MOUSE_Y;
+  let clickScale = 1, clickScaleTarget = 1;
+
+  window.addEventListener('mousemove', () => { root.classList.remove('cursor-hidden'); }, {passive:true});
+  document.addEventListener('mouseleave', () => root.classList.add('cursor-hidden'));
+  document.addEventListener('mouseenter', () => root.classList.remove('cursor-hidden'));
+  window.addEventListener('mousedown', () => { clickScaleTarget = 0.7; });
+  window.addEventListener('mouseup', () => { clickScaleTarget = 1; });
+  window.addEventListener('blur', () => { clickScaleTarget = 1; });
+
+  function raf(){
+    rx += (MOUSE_X - rx) * 0.18;
+    ry += (MOUSE_Y - ry) * 0.18;
+    clickScale += (clickScaleTarget - clickScale) * 0.3;
+    const s = clickScale.toFixed(3);
+    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%) scale(${s})`;
+    dot.style.transform = `translate(${MOUSE_X}px, ${MOUSE_Y}px) translate(-50%,-50%) scale(${s})`;
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+
+  const hoverSelector = 'a[href], button, [role="button"], summary';
+  function labelFor(el){
+    if (el.dataset.cursor) return el.dataset.cursor;
+    if (el.tagName === 'SUMMARY') return el.closest('.monthgroup[open]') ? 'Réduire' : 'Déplier';
+    return '';
+  }
+  document.addEventListener('mouseover', e => {
+    const target = e.target.closest(hoverSelector);
+    if (!target) return;
+    const txt = labelFor(target);
+    label.textContent = txt;
+    root.classList.add('cursor-hover');
+    root.classList.toggle('cursor-plain', !txt);
+  });
+  document.addEventListener('mouseout', e => {
+    const target = e.target.closest(hoverSelector);
+    if (target && !e.relatedTarget?.closest?.(hoverSelector)){
+      root.classList.remove('cursor-hover','cursor-plain');
+      label.textContent = '';
+    }
+  });
+
+  document.querySelectorAll('.magnetic').forEach(el => {
+    el.addEventListener('mousemove', e => {
+      const r = el.getBoundingClientRect();
+      const relX = e.clientX - (r.left + r.width/2);
+      const relY = e.clientY - (r.top + r.height/2);
+      el.style.transform = `translate(${relX*0.28}px, ${relY*0.35}px)`;
+    });
+    el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+  });
+})();
+
+/* ---------- Cursor particle trail (canvas) ---------- */
+(function(){
+  if (!CAN_HOVER) return;
+  const canvas = document.getElementById('cursor-trail');
+  const ctx = canvas.getContext('2d');
+  let dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const colors = ['54,84,255','255,122,69'];
+
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let particles = [];
+  let lastSpawn = 0;
+  window.addEventListener('mousemove', e => {
+    const now = performance.now();
+    if (now - lastSpawn < 26) return;
+    lastSpawn = now;
+    particles.push({
+      x:e.clientX, y:e.clientY,
+      vx:(Math.random()-0.5)*0.6, vy:(Math.random()-0.5)*0.6,
+      r: 3 + Math.random()*2.5,
+      life:1, color: colors[Math.floor(Math.random()*colors.length)]
+    });
+    if (particles.length > 40) particles.shift();
+  }, {passive:true});
+
+  function tick(){
+    ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.life -= 0.028;
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(${p.color},${Math.max(p.life,0)*0.55})`;
+      ctx.arc(p.x, p.y, p.r * Math.max(p.life,0), 0, Math.PI*2);
+      ctx.fill();
+    });
+    particles = particles.filter(p => p.life > 0);
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+
+/* ---------- 3D tilt on cards ---------- */
+(function(){
+  if (!CAN_HOVER) return;
+  document.querySelectorAll('.card:not(.no-tilt)').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      card.classList.add('tilting');
+      card.style.transform = `perspective(900px) rotateX(${(-py*7).toFixed(2)}deg) rotateY(${(px*7).toFixed(2)}deg) translateY(-4px) scale(1.015)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.classList.remove('tilting');
+      card.style.transform = '';
+    });
+  });
+})();
+</script>
+</body>
+</html>
