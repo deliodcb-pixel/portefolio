@@ -1,0 +1,961 @@
+/* =====================================================================
+   SPÉCIMEN — feuille de style unique du portfolio
+   Direction artistique : brutalisme raffiné x éditorial de luxe.
+   Sommaire :
+     1. Réinitialisation & base
+     2. Jetons (couleurs, typo, espacements) + thème sombre
+     3. Typographie éditoriale
+     4. Accessibilité (skip-link, focus)
+     5. Grain / bruit en overlay
+     6. Curseur fluide (WebGL) + texte en particules
+     7. Préchargeur
+     8. Rideau de transition
+     9. Navigation + bascule de thème
+    10. Utilitaires de mise en page
+    11. Page d'accueil — hero
+    12. Page d'accueil — sommaire des comptes rendus
+    13. Page d'accueil — contact / CV
+    14. Page veille — hero + bandeau défilant
+    15. Page veille — statistiques
+    16. Page veille — chronologie
+    17. Boutons & liens
+    18. Pied de page
+    19. Formulaire de contact
+    20. Responsive
+    21. Mouvement réduit
+   ===================================================================== */
+
+/* ---------- 1. Réinitialisation & base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: auto; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--ff-text);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background .3s ease, color .3s ease;
+}
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; margin: 0; padding: 0; }
+button { font: inherit; background: none; border: 0; cursor: pointer; color: inherit; }
+h1, h2, h3, h4, p { margin: 0; }
+
+/* ---------- 2. Jetons ---------- */
+:root {
+  /* Couleurs fixes de la marque — ne changent jamais avec le thème.
+     Elles servent telles quelles aux éléments volontairement toujours
+     "encre" (préchargeur, rideau, étiquette du curseur, skip-link). */
+  --paper: #EFEDE6;
+  --paper-rgb: 239, 237, 230;
+  --ink: #0E0E0E;
+  --ink-rgb: 14, 14, 14;
+  --accent: #1B29FF;
+  --accent-rgb: 27, 41, 255;
+  --muted: #6E6B62;
+  --ok: #1C8A4B;
+  --error: #C23B2A;
+
+  /* Rôles de thème — ce sont ceux qu'utilise le reste de la feuille de
+     style (fond de page, texte, bordures). Ils basculent en mode sombre
+     via le bloc [data-theme] et la media query plus bas. Par défaut
+     (clair) : fond papier, texte encre. */
+  --bg: var(--paper);
+  --bg-rgb: var(--paper-rgb);
+  --fg: var(--ink);
+  --fg-rgb: var(--ink-rgb);
+  --fg-muted: var(--muted);
+  --line: rgba(var(--fg-rgb), .14);
+  --line-strong: rgba(var(--fg-rgb), .5);
+
+  --ff-display: 'Clash Display', 'Space Grotesk', Arial, sans-serif;
+  --ff-text: 'General Sans', 'Space Grotesk', Arial, sans-serif;
+  --ff-mono: 'Space Grotesk', monospace;
+
+  --container: 1440px;
+  --gutter: clamp(20px, 4vw, 64px);
+  --radius: 2px;
+}
+
+/* Mode sombre : littéralement l'inverse papier/encre. Activé soit par
+   un choix explicite (bouton de bascule, mémorisé dans localStorage et
+   posé en attribut data-theme), soit par la préférence système si
+   l'utilisateur n'a rien choisi lui-même. */
+:root[data-theme="dark"] {
+  --bg: var(--ink);
+  --bg-rgb: var(--ink-rgb);
+  --fg: var(--paper);
+  --fg-rgb: var(--paper-rgb);
+  --fg-muted: #A6A296;
+  --ok: #7CFF9B;
+  --error: #FF8B7C;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: var(--ink);
+    --bg-rgb: var(--ink-rgb);
+    --fg: var(--paper);
+    --fg-rgb: var(--paper-rgb);
+    --fg-muted: #A6A296;
+    --ok: #7CFF9B;
+    --error: #FF8B7C;
+  }
+}
+
+/* ---------- 3. Typographie éditoriale ---------- */
+.display {
+  font-family: var(--ff-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+.eyebrow {
+  font-family: var(--ff-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.eyebrow::before {
+  content: '';
+  width: 22px;
+  height: 1px;
+  background: var(--accent);
+}
+.lede {
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1.5;
+  color: var(--fg);
+  max-width: 46ch;
+}
+.text-muted { color: var(--fg-muted); }
+.text-accent { color: var(--accent); }
+
+/* ---------- 4. Accessibilité ---------- */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 20px;
+  z-index: 999;
+  font-family: var(--ff-mono);
+  font-size: .85rem;
+}
+.skip-link:focus {
+  left: 12px;
+  top: 12px;
+}
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---------- 5. Grain ---------- */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- 6. Curseur fluide (WebGL) + texte en particules ---------- */
+.cursor { display: none; }
+html.has-cursor { cursor: none; }
+html.has-cursor a, html.has-cursor button, html.has-cursor summary { cursor: none; }
+html.has-cursor .cursor {
+  display: block;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 400;
+  pointer-events: none;
+}
+/* Simulation de fluide temps réel (assets/js/fluid-cursor.js) : encre
+   bleu accent qui tourbillonne et se dissipe, plutôt qu'une forme
+   géométrique qui la mime. */
+.fluid-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.cursor-label {
+  position: fixed;
+  top: 0; left: 0;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 5px 10px;
+  font-family: var(--ff-mono);
+  font-size: .62rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .2s;
+}
+html.cursor-hover .cursor-label { opacity: 1; }
+
+/* Texte en particules du hero (assets/js/particle-text.js) : le <h1>
+   reste dans le DOM et pleinement lisible par défaut (repli automatique
+   si le script échoue). Une fois les particules prêtes, le script pose
+   .particles-ready sur le conteneur : le texte devient transparent
+   (toujours accessible, juste invisible) et le canvas superposé prend
+   le relais visuellement. */
+.hero-title-wrap { position: relative; }
+.hero-title-wrap.particles-ready .hero-title { color: transparent; }
+.hero-title-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .6s ease;
+}
+.hero-title-wrap.particles-ready .hero-title-canvas { opacity: 1; }
+
+/* ---------- 7. Préchargeur ---------- */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: var(--ink);
+  color: var(--paper);
+}
+.preloader-panel {
+  position: absolute;
+  left: 0; right: 0;
+  background: var(--ink);
+}
+.preloader-panel--top {
+  top: 0; height: 52%;
+  clip-path: polygon(0 0,100% 0,100% 100%,91% 90%,82% 100%,73% 88%,64% 100%,55% 86%,46% 100%,37% 89%,28% 100%,19% 87%,10% 100%,0 91%);
+}
+.preloader-panel--bottom {
+  bottom: 0; height: 52%;
+  clip-path: polygon(0 9%,10% 0,19% 11%,28% 0,37% 9%,46% 0,55% 12%,64% 0,73% 10%,82% 0,91% 8%,100% 0,100% 100%,0 100%);
+}
+.preloader-count {
+  position: absolute;
+  top: var(--gutter);
+  left: var(--gutter);
+  font-family: var(--ff-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  z-index: 2;
+}
+.preloader-name {
+  position: absolute;
+  bottom: var(--gutter);
+  left: var(--gutter);
+  right: var(--gutter);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+.preloader-name span {
+  font-family: var(--ff-display);
+  font-size: clamp(2.4rem, 9vw, 7rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- 8. Rideau de transition ---------- */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 450;
+  background: var(--accent);
+  transform: translateY(101%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.curtain-label {
+  font-family: var(--ff-display);
+  font-size: clamp(3rem, 14vw, 11rem);
+  text-transform: uppercase;
+  color: var(--paper);
+  letter-spacing: -0.02em;
+}
+
+/* ---------- 9. Navigation ---------- */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(var(--bg-rgb), .88);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--line);
+  transition: background .3s ease;
+}
+.site-nav-inner {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 18px var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.brand {
+  font-family: var(--ff-display);
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  margin-right: auto;
+}
+.brand-dot { color: var(--accent); }
+.nav-links {
+  display: flex;
+  gap: 28px;
+}
+.nav-links a {
+  font-family: var(--ff-mono);
+  font-size: .82rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  position: relative;
+  padding-bottom: 3px;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .3s ease;
+}
+.nav-links a:hover::after,
+.nav-links a.is-active::after { transform: scaleX(1); transform-origin: left; }
+.nav-cv {
+  font-family: var(--ff-mono);
+  font-size: .82rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border: 1px solid var(--fg);
+  padding: 8px 16px;
+  display: inline-flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+.nav-cv:hover { background: var(--fg); color: var(--bg); }
+
+/* Bascule de thème : petit interrupteur brutaliste (rectangle + pastille
+   qui glisse), pas d'icône soleil/lune décorative. */
+.theme-toggle { display: inline-flex; align-items: center; }
+.theme-toggle-track {
+  display: block;
+  width: 38px; height: 20px;
+  border: 1px solid var(--fg);
+  position: relative;
+}
+.theme-toggle-thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 14px; height: 14px;
+  background: var(--fg);
+  transition: transform .25s ease;
+}
+:root[data-theme="dark"] .theme-toggle-thumb { transform: translateX(17px); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-toggle-thumb { transform: translateX(17px); }
+}
+
+.nav-burger {
+  display: none;
+  width: 28px; height: 18px;
+  position: relative;
+}
+.nav-burger span {
+  position: absolute; left: 0; right: 0;
+  height: 1.5px; background: var(--fg);
+}
+.nav-burger span:first-child { top: 0; }
+.nav-burger span:last-child { bottom: 0; }
+.nav-mobile {
+  display: none;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+  padding: 18px var(--gutter) 24px;
+}
+.nav-mobile a {
+  font-family: var(--ff-display);
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.nav-mobile .theme-toggle { padding: 14px 0; }
+.nav-mobile.is-open { display: flex; }
+
+/* ---------- 10. Utilitaires de mise en page ---------- */
+.wrap {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(16px, 2vw, 28px);
+}
+section { position: relative; }
+
+/* ---------- 11. Hero (accueil) ---------- */
+.hero {
+  padding: clamp(60px, 10vw, 120px) 0 clamp(40px, 6vw, 70px);
+  border-bottom: 1px solid var(--line);
+}
+.hero-spine {
+  grid-column: 1 / 2;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--ff-mono);
+  font-size: .78rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-bottom: 4px;
+}
+.hero-spine::after {
+  content: '';
+  width: 1px; height: 60px;
+  background: var(--accent);
+}
+.hero-title-wrap { grid-column: 2 / 13; }
+.hero-title {
+  font-size: clamp(3.4rem, 10.4vw, 9.5rem);
+}
+.hero-title .line-mask, .veille-title .line-mask { display: block; overflow: hidden; }
+.hero-title .line, .veille-title .line { display: block; will-change: transform; }
+.hero-foot {
+  grid-column: 2 / 13;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(16px, 2vw, 28px);
+  margin-top: clamp(28px, 5vw, 56px);
+  align-items: end;
+}
+.hero-lede {
+  grid-column: 1 / 6;
+}
+.hero-meta {
+  grid-column: 8 / 13;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: var(--ff-mono);
+  font-size: .82rem;
+  color: var(--fg-muted);
+  padding-top: clamp(30px, 6vw, 10px);
+}
+.hero-meta b { color: var(--fg); font-weight: 500; }
+
+/* ---------- 12. Sommaire des comptes rendus ---------- */
+.sommaire { padding: clamp(60px, 9vw, 110px) 0; }
+.sommaire-head {
+  grid-column: 2 / 13;
+  margin-bottom: clamp(30px, 5vw, 60px);
+}
+.sommaire-head h2 { font-size: clamp(2.4rem, 6vw, 4.6rem); margin-top: 10px; }
+.sommaire-head p { margin-top: 16px; }
+
+.annee {
+  grid-column: 1 / 13;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(16px, 2vw, 28px);
+  border-top: 1px solid var(--line);
+  padding: clamp(30px, 5vw, 50px) 0;
+}
+.annee-num-col { grid-column: 1 / 4; position: relative; }
+.annee-num {
+  position: sticky;
+  top: 100px;
+  font-size: clamp(4.5rem, 9vw, 8.5rem);
+  color: var(--fg);
+}
+.annee-num span { display: block; }
+.annee-periode {
+  font-family: var(--ff-mono);
+  font-size: .8rem;
+  color: var(--fg-muted);
+  margin-top: 8px;
+  letter-spacing: .06em;
+}
+.annee-count {
+  font-family: var(--ff-mono);
+  font-size: .78rem;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.blocs { grid-column: 4 / 13; }
+.bloc { border-bottom: 1px solid var(--line); }
+.bloc:first-child { border-top: 1px solid var(--line); }
+.bloc-summary {
+  padding: 20px 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  cursor: pointer;
+  list-style: none;
+}
+.bloc-summary::-webkit-details-marker { display: none; }
+.bloc-title {
+  font-family: var(--ff-display);
+  font-size: clamp(1.2rem, 2.4vw, 1.7rem);
+  text-transform: none;
+  letter-spacing: -0.01em;
+}
+.bloc-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--ff-mono);
+  font-size: .76rem;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+.bloc-plus {
+  width: 26px; height: 26px;
+  border: 1px solid var(--fg);
+  border-radius: 50%;
+  position: relative;
+  flex: none;
+}
+.bloc-plus::before, .bloc-plus::after {
+  content: '';
+  position: absolute;
+  background: var(--fg);
+  top: 50%; left: 50%;
+}
+.bloc-plus::before { width: 10px; height: 1px; transform: translate(-50%, -50%); }
+.bloc-plus::after { width: 1px; height: 10px; transform: translate(-50%, -50%); transition: transform .25s; }
+details[open] .bloc-plus::after { transform: translate(-50%, -50%) rotate(90deg); }
+.bloc-desc {
+  font-size: .95rem;
+  color: var(--fg-muted);
+  max-width: 62ch;
+  margin: 0 0 20px;
+}
+.bloc-list { padding-bottom: 22px; }
+.cr-item {
+  display: grid;
+  grid-template-columns: 44px 1fr auto auto;
+  align-items: center;
+  gap: 18px;
+  padding: 13px 0;
+  border-top: 1px solid var(--line);
+  text-decoration: none;
+}
+.cr-item:first-child { border-top: none; }
+.cr-idx {
+  font-family: var(--ff-mono);
+  font-size: .78rem;
+  color: var(--fg-muted);
+  transition: transform .25s, color .25s;
+}
+.cr-title {
+  font-size: 1rem;
+  position: relative;
+  width: fit-content;
+}
+.cr-title::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 100%; height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s ease;
+}
+.cr-date {
+  font-family: var(--ff-mono);
+  font-size: .78rem;
+  color: var(--fg-muted);
+}
+.cr-arrow {
+  font-family: var(--ff-mono);
+  font-size: .9rem;
+  transition: transform .25s ease;
+}
+.cr-item:hover .cr-title::after { transform: scaleX(1); }
+.cr-item:hover .cr-idx { color: var(--accent); transform: translateX(-3px); }
+.cr-item:hover .cr-arrow { transform: translate(4px, -4px); color: var(--accent); }
+
+/* ---------- 13. Contact / CV ---------- */
+/* Bande volontairement toujours "à contraste inversé" par rapport à la
+   page (encre en thème clair, papier en thème sombre) — cf. §2 : elle
+   utilise --fg/--bg (qui basculent) plutôt que --ink/--paper (fixes),
+   afin de toujours se détacher du reste de la page quel que soit le
+   thème actif. */
+.contact-band {
+  background: var(--fg);
+  color: var(--bg);
+  padding: clamp(60px, 10vw, 120px) 0;
+}
+.contact-band .eyebrow { color: rgba(var(--bg-rgb), .55); }
+.contact-band .eyebrow::before { background: var(--accent); }
+.contact-cta {
+  grid-column: 1 / 13;
+  font-size: clamp(2.6rem, 8vw, 6.2rem);
+  color: var(--bg);
+  margin: 14px 0 clamp(30px, 6vw, 60px);
+}
+.contact-cta a {
+  display: inline-block;
+  border-bottom: 2px solid var(--accent);
+}
+.contact-grid {
+  grid-column: 1 / 13;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(20px, 3vw, 32px);
+}
+.contact-info { grid-column: 1 / 5; }
+.contact-info a { color: var(--bg); }
+.contact-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 0;
+  border-top: 1px solid rgba(var(--bg-rgb), .18);
+}
+.contact-row:last-child { border-bottom: 1px solid rgba(var(--bg-rgb), .18); }
+.contact-row b {
+  font-family: var(--ff-mono);
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(var(--bg-rgb), .55);
+  font-weight: 400;
+}
+.contact-form-wrap { grid-column: 6 / 13; }
+
+/* ---------- 14. Veille — hero + bandeau ---------- */
+.veille-hero {
+  padding: clamp(50px, 8vw, 90px) 0 0;
+}
+.veille-back {
+  grid-column: 1 / 13;
+  font-family: var(--ff-mono);
+  font-size: .8rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: clamp(20px, 4vw, 40px);
+}
+.veille-title { grid-column: 1 / 12; font-size: clamp(2.6rem, 7.5vw, 6rem); }
+.veille-sub { color: var(--accent); }
+.veille-lede { grid-column: 1 / 7; margin-top: clamp(20px, 3vw, 34px); }
+
+/* Même logique de bande à contraste inversé que .contact-band. */
+.marquee-band {
+  border-top: 1px solid var(--fg);
+  border-bottom: 1px solid var(--fg);
+  overflow: hidden;
+  margin-top: clamp(30px, 5vw, 56px);
+  background: var(--fg);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 26s linear infinite;
+}
+.marquee-track span {
+  font-family: var(--ff-display);
+  font-size: clamp(2.2rem, 6vw, 4.2rem);
+  color: var(--bg);
+  padding: 14px clamp(20px, 3vw, 40px);
+  white-space: nowrap;
+}
+.marquee-track span em {
+  font-style: normal;
+  color: var(--accent);
+  margin-right: clamp(20px, 3vw, 40px);
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ---------- 15. Veille — statistiques ---------- */
+.veille-stats {
+  padding: clamp(30px, 5vw, 50px) 0;
+}
+.stat-row {
+  grid-column: 1 / 13;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.stat-tile {
+  padding: clamp(20px, 3vw, 34px) clamp(10px, 2vw, 24px);
+  border-left: 1px solid var(--line);
+}
+.stat-tile:first-child { border-left: none; }
+.stat-tile b {
+  display: block;
+  font-family: var(--ff-display);
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  color: var(--accent);
+}
+.stat-tile span {
+  font-family: var(--ff-mono);
+  font-size: .74rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--fg-muted);
+}
+
+/* ---------- 16. Veille — chronologie ---------- */
+.veille-timeline { padding: clamp(50px, 8vw, 100px) 0; }
+.timeline-head { grid-column: 1 / 13; margin-bottom: clamp(30px, 5vw, 56px); }
+.timeline-head h2 { font-size: clamp(2.2rem, 5.5vw, 4rem); margin-top: 10px; }
+.timeline-head p { margin-top: 14px; }
+
+.mois-groupe {
+  grid-column: 1 / 13;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(16px, 2vw, 28px);
+  border-top: 1px solid var(--line);
+  padding: clamp(24px, 4vw, 40px) 0;
+}
+.mois-groupe:last-child { border-bottom: 1px solid var(--line); }
+.mois-col { grid-column: 1 / 4; position: relative; }
+.mois-label {
+  position: sticky;
+  top: 100px;
+}
+.mois-label .display {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  text-transform: none;
+}
+.mois-count {
+  font-family: var(--ff-mono);
+  font-size: .78rem;
+  color: var(--accent);
+  margin-top: 6px;
+}
+.entrees-col { grid-column: 4 / 13; display: flex; flex-direction: column; gap: 20px; }
+.entree {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 18px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+.entree:last-child { border-bottom: none; padding-bottom: 0; }
+.entree-date {
+  font-family: var(--ff-mono);
+  font-size: .78rem;
+  color: var(--fg-muted);
+  padding-top: 3px;
+}
+.entree-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.entree-outil {
+  font-family: var(--ff-mono);
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  border: 1px solid var(--line-strong);
+  padding: 3px 9px;
+  color: var(--fg-muted);
+}
+.entree-source {
+  font-family: var(--ff-mono);
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.entree-source::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 100%; height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+.entree-source:hover::after { transform: scaleX(1); }
+.entree-texte { max-width: 68ch; }
+
+/* ---------- 17. Boutons & liens ---------- */
+.btn-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--ff-mono);
+  font-size: .85rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 4px;
+}
+.magnetic { display: inline-block; will-change: transform; }
+
+/* ---------- 18. Pied de page ---------- */
+.site-footer { border-top: 1px solid var(--line); padding: 26px 0; }
+.site-footer-inner {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  font-family: var(--ff-mono);
+  font-size: .76rem;
+  color: var(--fg-muted);
+}
+.site-footer-sep { opacity: .5; }
+.site-footer-mail { margin-left: auto; color: var(--fg); }
+.to-top {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 44px; height: 44px;
+  border: 1px solid var(--fg);
+  background: var(--bg);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ff-mono);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity .3s, transform .3s;
+  z-index: 150;
+}
+.to-top.is-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+/* ---------- 19. Formulaire de contact ---------- */
+.form { position: relative; }
+.form-row { margin-bottom: 22px; }
+.form-row label {
+  display: block;
+  font-family: var(--ff-mono);
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(var(--bg-rgb), .55);
+  margin-bottom: 8px;
+}
+.form-row input,
+.form-row textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(var(--bg-rgb), .3);
+  color: var(--bg);
+  font-family: var(--ff-text);
+  font-size: 1rem;
+  padding: 10px 0;
+  resize: vertical;
+}
+.form-row input::placeholder,
+.form-row textarea::placeholder { color: rgba(var(--bg-rgb), .35); }
+.form-row input:focus,
+.form-row textarea:focus { border-color: var(--accent); }
+.form-honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.form-submit {
+  margin-top: 10px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--ff-mono);
+  font-size: .82rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border: 1px solid var(--accent);
+}
+.form-submit:hover { background: transparent; color: var(--accent); }
+.form-note {
+  margin-top: 16px;
+  font-family: var(--ff-mono);
+  font-size: .8rem;
+  min-height: 1.2em;
+}
+.form-note.is-ok { color: var(--ok); }
+.form-note.is-error { color: var(--error); }
+
+/* ---------- 20. Responsive ---------- */
+@media (max-width: 960px) {
+  .nav-links { display: none; }
+  .nav-cv { display: none; }
+  .theme-toggle { display: none; }
+  .nav-burger { display: block; }
+
+  .hero-spine { display: none; }
+  .hero-title-wrap, .hero-lede, .hero-meta, .sommaire-head,
+  .annee-num-col, .blocs, .contact-info, .contact-form-wrap,
+  .veille-title, .veille-lede, .mois-col, .entrees-col { grid-column: 1 / 13; }
+  .hero-meta { padding-top: 0; margin-top: 20px; flex-direction: row; gap: 24px; }
+  .annee-num { position: static; margin-bottom: 14px; font-size: clamp(3rem, 14vw, 5rem); }
+  .mois-label { position: static; margin-bottom: 10px; }
+  .stat-row { grid-template-columns: repeat(2, 1fr); }
+  .stat-tile:nth-child(3) { border-left: none; }
+  .contact-form-wrap { margin-top: 30px; }
+  .entree { grid-template-columns: 1fr; gap: 6px; }
+  .nav-mobile .theme-toggle { display: inline-flex; }
+}
+@media (max-width: 640px) {
+  .cr-item { grid-template-columns: 30px 1fr auto; }
+  .cr-date { display: none; }
+  .preloader-name span { font-size: clamp(2rem, 13vw, 3.6rem); }
+  .hero-meta { flex-direction: column; gap: 16px; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .contact-info, .contact-form-wrap { grid-column: 1 / -1; }
+}
+
+/* ---------- 21. Mouvement réduit ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  .marquee-track { animation: none; }
+  .cursor, .grain { display: none !important; }
+  html.has-cursor { cursor: auto; }
+  html.has-cursor a, html.has-cursor button, html.has-cursor summary { cursor: pointer; }
+  .hero-title.has-particles { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; }
+  .hero-title-canvas { display: none; }
+}
