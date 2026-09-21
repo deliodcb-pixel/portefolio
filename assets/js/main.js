@@ -50,18 +50,22 @@
     requestAnimationFrame(raf);
   }
 
-  /* ---------- Curseur : positionnement de l'étiquette ----------
-     Le rendu visuel du curseur (simulation de fluide) vit dans son
-     propre fichier, assets/js/fluid-cursor.js, qui gère lui-même ses
-     conditions d'activation. Ici on ne place que l'étiquette texte
-     ("PDF", "Source ↗"…) et on détecte le survol des éléments cliquables. */
+  /* ---------- Curseur : point précis + étiquette ----------
+     Le rendu "fluide" (simulation de fumée) vit dans son propre fichier,
+     assets/js/fluid-cursor.js, qui gère lui-même ses conditions
+     d'activation — flou et en retard par nature, il ne suffit pas à
+     indiquer où on clique. Ici on positionne donc en plus un point net,
+     sans latence, exactement sur le pointeur, ainsi que l'étiquette
+     texte ("PDF", "Source ↗"…) et la détection de survol. */
   if (CAN_HOVER) {
     root.classList.add('has-cursor');
+    const dot = document.getElementById('cursorDot');
     const label = document.getElementById('cursorLabel');
     let mx = window.innerWidth / 2, my = window.innerHeight / 2;
 
     window.addEventListener('mousemove', (e) => {
       mx = e.clientX; my = e.clientY;
+      if (dot) dot.style.transform = `translate(${mx}px, ${my}px)`;
       if (label) label.style.transform = `translate(${mx + 26}px, ${my - 12}px)`;
     }, { passive: true });
 
