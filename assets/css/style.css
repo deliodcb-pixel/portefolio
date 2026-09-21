@@ -201,19 +201,19 @@ html.has-cursor .cursor {
 .cursor-dot {
   position: fixed;
   top: 0; left: 0;
-  width: 6px; height: 6px;
-  margin: -3px 0 0 -3px;
-  background: var(--paper);
+  width: 10px; height: 10px;
+  margin: -5px 0 0 -5px;
+  background: var(--accent);
   border-radius: 50%;
-  /* Inverse la couleur du pixel sous le point plutôt que d'en poser une
-     fixe : reste visible que ce soit sur le papier, l'encre ou la fumée
-     bleue de la simulation de fluide, sans jamais se fondre dedans. */
-  mix-blend-mode: difference;
+  /* Double liseré (clair puis sombre) autour du point bleu : l'un des
+     deux contraste toujours, que le fond soit clair, sombre ou la fumée
+     bleue de la simulation de fluide — le point ne s'y fond jamais. */
+  box-shadow: 0 0 0 1.5px var(--paper), 0 0 0 3px var(--ink);
   transition: width .2s ease, height .2s ease, margin .2s ease;
 }
 html.cursor-hover .cursor-dot {
-  width: 9px; height: 9px;
-  margin: -4.5px 0 0 -4.5px;
+  width: 14px; height: 14px;
+  margin: -7px 0 0 -7px;
 }
 .cursor-label {
   position: fixed;
