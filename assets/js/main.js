@@ -2,6 +2,12 @@
  * SPÉCIMEN — comportements du site (défilement fluide, révélations,
  * curseur personnalisé, préchargeur, transition entre pages).
  * Respecte prefers-reduced-motion à chaque étape.
+ *
+ * VERSION STATIQUE (GitHub Pages) — ne pas éditer directement : c'est
+ * une copie de portfolio/assets/js/main.js avec un seul changement (le
+ * formulaire de contact en repli mailto, pas de backend PHP disponible
+ * ici). Après toute modification de main.js, reporter le changement ici
+ * à la main, puis lancer deploy.sh.
  */
 (function () {
   'use strict';
@@ -123,9 +129,7 @@
   /* ---------- Formulaire de contact (repli mailto) ----------
      Version statique (GitHub Pages) : pas de serveur PHP disponible pour
      traiter le formulaire, donc on ouvre directement la messagerie de
-     l'utilisateur avec le message pré-rempli, comme sur l'ancien site.
-     Enregistré tôt, avant les blocs GSAP décoratifs ci-dessous : une
-     erreur d'animation ne doit jamais empêcher le formulaire de marcher. */
+     l'utilisateur avec le message pré-rempli, comme sur l'ancien site. */
   const form = document.getElementById('contactForm');
   if (form) {
     const note = document.getElementById('formNote');
