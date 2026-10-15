@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contrôle PHP — Délio Duchesne-Brajon</title>
+<meta name="description" content="Contrôle de PHP (BTS SIO SLAM) : application Symfony de médiathèque, cinq anomalies trouvées et corrigées.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Contrôle PHP — Délio Duchesne-Brajon">
+<meta property="og:description" content="Contrôle de PHP (BTS SIO SLAM) : application Symfony de médiathèque, cinq anomalies trouvées et corrigées.">
+<meta name="theme-color" content="#EFEDE6">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Titraille : Clash Display (Fontshare). Secours hors-ligne : Space Grotesk (Google Fonts). -->
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@600,500,400&f[]=general-sans@400,500,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap">
+
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="page-veille page-controle">
+
+<a href="#contenu" class="skip-link">Aller au contenu</a>
+
+<!-- Grain / bruit en overlay -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- Curseur fluide (souris fine uniquement, cf. assets/js/fluid-cursor.js) :
+     vraie simulation de fluide en temps réel (advection, pression,
+     confinement de vorticité) rendue en WebGL sur ce canvas plein écran —
+     de l'encre bleu accent qui tourbillonne et se dissipe, pas une forme
+     géométrique qui l'imite. Repli silencieux si WebGL est indisponible. -->
+<div class="cursor" id="cursor" aria-hidden="true">
+  <canvas id="fluidCanvas" class="fluid-canvas"></canvas>
+  <div class="cursor-dot" id="cursorDot"></div>
+  <span class="cursor-label" id="cursorLabel"></span>
+</div>
+
+<!-- Préchargeur -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader-count"><span id="preloaderCount">00</span></div>
+  <div class="preloader-name">
+    <span>DÉLIO</span><span>DUCHESNE</span><span>BRAJON</span>
+  </div>
+</div>
+
+<!-- Rideau de transition entre les pages -->
+<div class="curtain" id="curtain" aria-hidden="true"><span class="curtain-label">CONTRÔLE</span></div>
+
+<header class="site-nav">
+  <div class="site-nav-inner">
+    <a href="index.html" class="brand" data-cursor="Accueil">DDB<span class="brand-dot">.</span></a>
+
+    <nav aria-label="Navigation principale">
+      <ul class="nav-links">
+        <li><a href="index.html#sommaire" class="">Accueil</a></li>
+        <li><a href="veille.html" class="nav-link-veille " data-transition="veille">Veille</a></li>
+        <li><a href="controle.html" class="is-active" data-transition="contrôle">Contrôle</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <a href="reports/cv-delio-duchesne-brajon.pdf" download class="nav-cv magnetic" data-cursor="PDF">
+      CV <span aria-hidden="true">↓</span>
+    </a>
+
+    <button class="theme-toggle" aria-label="Basculer entre thème clair et sombre" data-cursor="Thème">
+      <span class="theme-toggle-track"><span class="theme-toggle-thumb"></span></span>
+    </button>
+
+    <button class="nav-burger" id="navBurger" aria-expanded="false" aria-controls="navMobile" aria-label="Ouvrir le menu">
+      <span></span><span></span>
+    </button>
+  </div>
+
+  <div class="nav-mobile" id="navMobile">
+    <a href="index.html#sommaire">Accueil</a>
+    <a href="veille.html" data-transition="veille">Veille</a>
+    <a href="controle.html" data-transition="contrôle">Contrôle</a>
+    <a href="index.html#contact">Contact</a>
+    <a href="reports/cv-delio-duchesne-brajon.pdf" download>Télécharger le CV</a>
+    <button class="theme-toggle" aria-label="Basculer entre thème clair et sombre">
+      <span class="theme-toggle-track"><span class="theme-toggle-thumb"></span></span>
+      <span style="font-family:var(--ff-mono);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;margin-left:12px;">Thème</span>
+    </button>
+  </div>
+</header>
+
+<main id="contenu">
+
+  <!-- ================= HERO CONTRÔLE ================= -->
+  <section class="veille-hero" id="top">
+    <div class="wrap grid-12">
+      <a href="index.html" class="veille-back" data-transition="accueil" data-cursor="Retour">← Retour au portfolio</a>
+      <h1 class="veille-title display">
+        <span class="line-mask"><span class="line">CONTRÔLE</span></span>
+        <span class="line-mask"><span class="line veille-sub">PHP · SYMFONY</span></span>
+      </h1>
+      <p class="veille-lede lede">
+        Contrôle de PHP du 15 octobre 2026. On nous a fourni une application Symfony
+        de médiathèque (catalogue de livres, emprunts, comptes élève et documentaliste)
+        qui contenait cinq anomalies : il fallait les trouver, expliquer leur cause
+        et les corriger.
+      </p>
+    </div>
+
+    <div class="marquee-band" data-pin>
+      <div class="marquee-track">
+        <span><em>◆</em>Contrôle PHP<em>◆</em>Symfony 7.4<em>◆</em>Doctrine<em>◆</em>Twig<em>◆</em>Sécurité<em>◆</em>Contrôle PHP<em>◆</em>Symfony 7.4<em>◆</em>Doctrine<em>◆</em>Twig<em>◆</em>Sécurité<em>◆</em></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STATISTIQUES ================= -->
+  <section class="veille-stats">
+    <div class="wrap grid-12">
+      <div class="stat-row reveal-group">
+        <div class="stat-tile">
+          <b class="display">5</b>
+          <span>anomalies corrigées</span>
+        </div>
+        <div class="stat-tile">
+          <b class="display">4</b>
+          <span>fichiers modifiés</span>
+        </div>
+        <div class="stat-tile">
+          <b class="display">3</b>
+          <span>failles de sécurité</span>
+        </div>
+        <div class="stat-tile">
+          <b class="display">7.4</b>
+          <span>version de Symfony</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LIVRABLES ================= -->
+  <section class="sommaire" id="livrables">
+    <div class="wrap grid-12">
+      <div class="sommaire-head split-lines">
+        <div class="eyebrow">01 — Livrables</div>
+        <h2 class="display">Ce qui a été rendu</h2>
+        <p class="lede">
+          Le fichier de réponses et le projet corrigé, tels que rendus à la fin du contrôle.
+        </p>
+      </div>
+
+      <div class="annee">
+        <div class="annee-num-col">
+          <div class="annee-num display"><span>01</span></div>
+          <div class="annee-periode">2de année · 15 oct. 2026</div>
+          <div class="annee-count">Projet « Médiathèque »</div>
+        </div>
+
+        <div class="blocs reveal-group">
+          <details class="bloc" open>
+            <summary class="bloc-summary">
+              <span class="bloc-title">Contrôle PHP — Médiathèque</span>
+              <span class="bloc-meta">
+                <span>3 éléments</span>
+                <span class="bloc-plus" aria-hidden="true"></span>
+              </span>
+            </summary>
+            <div class="bloc-list">
+              <p class="bloc-desc">
+                Le projet est livré sans le dossier <code>vendor</code>. Pour le lancer :
+                <code>composer install</code>, <code>php bin/console doctrine:migrations:migrate</code>,
+                <code>php bin/console doctrine:fixtures:load</code> puis <code>symfony serve</code>.
+                Les fixtures créent un compte élève et un compte documentaliste.
+              </p>
+              <a class="cr-item" href="https://github.com/deliodcb-pixel/portefolio/blob/main/projets/controle-php/REPONSES.md" target="_blank" rel="noopener" data-cursor="MD ↗">
+                <span class="cr-idx">01</span>
+                <span class="cr-title">Réponses du contrôle (REPONSES.md)</span>
+                <span class="cr-date">15 oct. 2026</span>
+                <span class="cr-arrow" aria-hidden="true">↗</span>
+              </a>
+              <a class="cr-item" href="reports/controle-php-mediatheque.zip" download data-cursor="ZIP">
+                <span class="cr-idx">02</span>
+                <span class="cr-title">Projet Symfony corrigé (.zip)</span>
+                <span class="cr-date">15 oct. 2026</span>
+                <span class="cr-arrow" aria-hidden="true">↓</span>
+              </a>
+              <a class="cr-item" href="https://github.com/deliodcb-pixel/portefolio/tree/main/projets/controle-php" target="_blank" rel="noopener" data-cursor="GitHub ↗">
+                <span class="cr-idx">03</span>
+                <span class="cr-title">Code source sur GitHub</span>
+                <span class="cr-date">15 oct. 2026</span>
+                <span class="cr-arrow" aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ANOMALIES ================= -->
+  <section class="veille-timeline" id="anomalies">
+    <div class="wrap grid-12">
+      <div class="timeline-head split-lines">
+        <div class="eyebrow">02 — Anomalies</div>
+        <h2 class="display">Cinq anomalies, cinq corrections</h2>
+        <p class="lede">
+          Pour chaque anomalie : ce que l'on constate, la cause trouvée dans le code
+          et la correction apportée. Les numéros de ligne correspondent au projet fourni.
+        </p>
+      </div>
+
+      <div class="mois-groupe">
+        <div class="mois-col">
+          <div class="mois-label">
+            <div class="display">Fonctionnement</div>
+            <div class="mois-count">2 anomalies</div>
+          </div>
+        </div>
+        <div class="entrees-col reveal-group">
+          <article class="entree">
+            <div class="entree-date">Anomalie 01</div>
+            <div>
+              <div class="entree-head">
+                <span class="entree-outil">Routage</span>
+                <a class="entree-source" href="https://github.com/deliodcb-pixel/portefolio/blob/main/projets/controle-php/src/Controller/LivreController.php" target="_blank" rel="noopener" data-cursor="Code ↗">
+                  LivreController.php ↗
+                </a>
+              </div>
+              <div class="entree-texte">
+                <p><span class="lbl">Constat</span>Avec le compte documentaliste, on ne peut pas ajouter de livre : on arrive sur une erreur 404 (dans <code>var/log/dev.log</code> : « App\Entity\Livre object not found »).</p>
+                <p><span class="lbl">Cause</span>Ligne 27, la route <code>livre_show</code> (<code>/livres/{id}</code>) est déclarée avant <code>livre_new</code> (<code>/livres/nouveau</code>) et <code>{id}</code> accepte n'importe quel texte, donc Symfony prend « nouveau » pour l'id d'un livre. On le voit avec <code>debug:router</code>.</p>
+                <p><span class="lbl">Correction</span>Ajout de <code>requirements: ['id' =&gt; '\d+']</code> sur <code>livre_show</code> pour que <code>{id}</code> n'accepte que des chiffres.</p>
+              </div>
+            </div>
+          </article>
+          <article class="entree">
+            <div class="entree-date">Anomalie 03</div>
+            <div>
+              <div class="entree-head">
+                <span class="entree-outil">Doctrine</span>
+                <a class="entree-source" href="https://github.com/deliodcb-pixel/portefolio/blob/main/projets/controle-php/src/Controller/LivreController.php" target="_blank" rel="noopener" data-cursor="Code ↗">
+                  LivreController.php ↗
+                </a>
+              </div>
+              <div class="entree-texte">
+                <p><span class="lbl">Constat</span>Une fois la page d'ajout réparée, le message « Le livre a été ajouté au catalogue » s'affiche mais le livre n'apparaît pas dans le catalogue.</p>
+                <p><span class="lbl">Cause</span>Ligne 43, il y a <code>$em-&gt;persist($livre)</code> mais pas de <code>$em-&gt;flush()</code>, donc rien n'est enregistré en base.</p>
+                <p><span class="lbl">Correction</span>Ajout de <code>$em-&gt;flush()</code> après le <code>persist()</code>.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="mois-groupe">
+        <div class="mois-col">
+          <div class="mois-label">
+            <div class="display">Sécurité</div>
+            <div class="mois-count">3 anomalies</div>
+          </div>
+        </div>
+        <div class="entrees-col reveal-group">
+          <article class="entree">
+            <div class="entree-date">Anomalie 02</div>
+            <div>
+              <div class="entree-head">
+                <span class="entree-outil">Faille XSS</span>
+                <a class="entree-source" href="https://github.com/deliodcb-pixel/portefolio/blob/main/projets/controle-php/templates/livre/show.html.twig" target="_blank" rel="noopener" data-cursor="Code ↗">
+                  show.html.twig ↗
+                </a>
+              </div>
+              <div class="entree-texte">
+                <p><span class="lbl">Constat</span>Quel que soit le compte, en ouvrant le septième livre (« Voyage au centre de la Terre »), un pop-up oblige à cliquer sur OK avant d'afficher la page. Même chose après une modification.</p>
+                <p><span class="lbl">Cause</span>Ligne 15, la description est affichée avec <code>|raw</code> : Twig n'échappe pas le HTML et le script <code>alert(1)</code> présent dans la description est exécuté par le navigateur. Un script malveillant pourrait voler la session des utilisateurs.</p>
+                <p><span class="lbl">Correction</span>Suppression du <code>|raw</code> : le script s'affiche maintenant comme du texte.</p>
+              </div>
+            </div>
+          </article>
+          <article class="entree">
+            <div class="entree-date">Anomalie 04</div>
+            <div>
+              <div class="entree-head">
+                <span class="entree-outil">Injection DQL</span>
+                <a class="entree-source" href="https://github.com/deliodcb-pixel/portefolio/blob/main/projets/controle-php/src/Repository/LivreRepository.php" target="_blank" rel="noopener" data-cursor="Code ↗">
+                  LivreRepository.php ↗
+                </a>
+              </div>
+              <div class="entree-texte">
+                <p><span class="lbl">Constat</span>Une recherche contenant une apostrophe (par exemple « l' ») provoque une erreur 500.</p>
+                <p><span class="lbl">Cause</span>Ligne 32, le texte de la recherche est collé directement dans la requête DQL, l'utilisateur peut donc modifier la requête.</p>
+                <p><span class="lbl">Correction</span>Utilisation d'un paramètre : <code>-&gt;andWhere('l.titre LIKE :q')-&gt;setParameter('q', '%' . $q . '%')</code>.</p>
+              </div>
+            </div>
+          </article>
+          <article class="entree">
+            <div class="entree-date">Anomalie 05</div>
+            <div>
+              <div class="entree-head">
+                <span class="entree-outil">Contrôle d'accès</span>
+                <a class="entree-source" href="https://github.com/deliodcb-pixel/portefolio/blob/main/projets/controle-php/config/packages/security.yaml" target="_blank" rel="noopener" data-cursor="Code ↗">
+                  security.yaml ↗
+                </a>
+              </div>
+              <div class="entree-texte">
+                <p><span class="lbl">Constat</span>Avec le compte élève, on peut aller sur <code>/livres/1/modifier</code> et modifier un livre, alors que c'est réservé aux documentalistes.</p>
+                <p><span class="lbl">Cause</span>Lignes 32-33, la règle <code>^/livres</code> (<code>ROLE_USER</code>) est placée avant celle des documentalistes. Symfony applique seulement la première règle qui correspond, celle des documentalistes n'est donc jamais utilisée.</p>
+                <p><span class="lbl">Correction</span>La règle des documentalistes est placée avant <code>^/livres</code>. L'élève obtient maintenant une erreur 403 sur l'ajout, la modification et la suppression.</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <span>© 2026 Délio Duchesne-Brajon</span>
+      <span class="site-footer-sep">—</span>
+      <span>BTS SIO SLAM, Lycée Dominique Villars, Gap</span>
+      <a href="mailto:deliodcb@gmail.com" class="site-footer-mail">deliodcb@gmail.com</a>
+    </div>
+  </footer>
+
+  <a href="#top" class="to-top" id="toTop" aria-label="Retour en haut">↑</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+  <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/fluid-cursor.js" defer></script>
+  <script src="assets/js/particle-text.js" defer></script>
+</body>
+</html>

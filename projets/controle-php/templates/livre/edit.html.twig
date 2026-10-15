@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier {{ livre.titre }}{% endblock %}
+
+{% block body %}
+    <h1>Modifier « {{ livre.titre }} »</h1>
+
+    {{ include('livre/_form.html.twig', {button_label: 'Enregistrer les modifications'}) }}
+
+    <p><a href="{{ path('livre_show', {id: livre.id}) }}">Retour à la fiche</a></p>
+{% endblock %}

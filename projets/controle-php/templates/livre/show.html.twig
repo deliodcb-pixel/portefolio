@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ livre.titre }}{% endblock %}
+
+{% block body %}
+    <h1>{{ livre.titre }}</h1>
+
+    <p><strong>Auteur :</strong> {{ livre.auteur }}</p>
+    <p><strong>ISBN :</strong> {{ livre.isbn }}</p>
+    <p><strong>Publié le :</strong> {{ livre.datePublication|date('d/m/Y') }}</p>
+    <p><strong>Catégories :</strong> {{ livre.categories|join(', ') }}</p>
+    <p><strong>Exemplaires :</strong> {{ livre.nbExemplaires }}</p>
+
+    {% if livre.description %}
+        <div class="description">{{ livre.description }}</div>
+    {% endif %}
+
+    {% if app.user %}
+        <form method="post" action="{{ path('livre_emprunter', {id: livre.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('emprunter' ~ livre.id) }}">
+            <button type="submit">Emprunter</button>
+        </form>
+    {% endif %}
+
+    <p>
+        <a href="{{ path('livre_index') }}">Retour au catalogue</a>
+        {% if is_granted('ROLE_DOCUMENTALISTE') %}
+            | <a href="{{ path('livre_edit', {id: livre.id}) }}">Modifier</a>
+            | <a href="{{ path('livre_delete', {id: livre.id}) }}" onclick="return confirm('Supprimer ce livre ?');">Supprimer</a>
+        {% endif %}
+    </p>
+{% endblock %}

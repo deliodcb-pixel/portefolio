@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catalogue{% endblock %}
+
+{% block body %}
+    <h1>Catalogue de la médiathèque</h1>
+
+    <form method="get" action="{{ path('livre_index') }}" class="search">
+        <input type="search" name="q" value="{{ q }}" placeholder="Rechercher par titre">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    {% if livres is empty %}
+        <p>Aucun livre trouvé.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Auteur</th>
+                    <th>Catégories</th>
+                    <th>Année</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for livre in livres %}
+                <tr>
+                    <td>{{ livre.titre }}</td>
+                    <td>{{ livre.auteur }}</td>
+                    <td>{{ livre.categories|join(', ') }}</td>
+                    <td>{{ livre.datePublication|date('Y') }}</td>
+                    <td><a href="{{ path('livre_show', {id: livre.id}) }}">Voir</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

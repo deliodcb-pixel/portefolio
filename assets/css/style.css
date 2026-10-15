@@ -981,3 +981,22 @@ details[open] .bloc-plus::after { transform: translate(-50%, -50%) rotate(90deg)
   .hero-title.has-particles { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; }
   .hero-title-canvas { display: none; }
 }
+
+/* ---------- 22. Pages projet (Contrôle, GSB) ---------- */
+.entree-texte p + p { margin-top: 8px; }
+.entree-texte .lbl {
+  font-family: var(--ff-mono);
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--accent);
+  margin-right: 8px;
+}
+.entree-texte code,
+.bloc-desc code {
+  font-family: var(--ff-mono);
+  font-size: .82em;
+  border: 1px solid var(--line);
+  padding: 0 5px;
+  overflow-wrap: anywhere;
+}

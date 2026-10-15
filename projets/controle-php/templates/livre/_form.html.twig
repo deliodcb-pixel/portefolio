@@ -1,0 +1,5 @@
+{# Le « novalidate » désactive la validation HTML5 du navigateur : on voit ainsi les messages de validation de Symfony. #}
+{{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+    {{ form_widget(form) }}
+    <button type="submit">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form) }}
