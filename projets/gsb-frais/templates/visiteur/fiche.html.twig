@@ -1,0 +1,357 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Fiche de {{ fiche.periodeLibelle }} — GSB{% endblock %}
+
+{% block body %}
+
+<div class="fiche-tete">
+    <div>
+        <strong>{{ fiche.periodeLibelle }}</strong>
+        <div class="detail">
+            {{ fiche.visiteur.nomComplet }}
+            {% if fiche.vehicule %}
+                · véhicule {{ fiche.vehicule.libelle }}
+                ({{ fiche.tarifKm|number_format(2, ',', ' ') }} €/km)
+            {% endif %}
+            · {{ fiche.nbJustificatifs }} justificatif{{ fiche.nbJustificatifs > 1 ? 's' }}
+        </div>
+    </div>
+    <span class="badge b-{{ fiche.statut.value|lower }}">{{ fiche.statut.libelleCourt }}</span>
+</div>
+
+{% if not fiche.estModifiable %}
+    <div class="note">Cette fiche est {{ fiche.statut.libelle|lower }} : elle n'est plus modifiable.
+        Vous pouvez la consulter et l'imprimer.</div>
+{% endif %}
+
+<div class="carte">
+    <h2>Véhicule utilisé {{ fiche.estModifiable ? 'ce mois-ci' : 'en ' ~ fiche.periodeLibelle }}</h2>
+    <div class="corps">
+        {% if fiche.estModifiable %}
+            <div class="note">C'est à vous de déclarer votre véhicule : le tarif kilométrique dépend
+                de sa puissance fiscale et de son carburant. Une nouvelle fiche reprend le dernier
+                que vous avez déclaré ; si vous avez changé de voiture, choisissez celle réellement
+                utilisée : les mois précédents gardent la leur.</div>
+
+            {% if not fiche.vehicule %}
+                <div class="alerte">Aucun véhicule déclaré pour ce mois. Choisissez le vôtre avant de
+                    saisir des trajets ou des kilomètres.</div>
+            {% endif %}
+
+            <form method="post" action="{{ path('visiteur_fiche_vehicule', {id: fiche.id}) }}" class="ligne">
+                <input type="hidden" name="_token" value="{{ csrf_token('vehicule' ~ fiche.id) }}">
+                <div style="flex:1; min-width:240px">
+                    <label for="vehicule">Mon véhicule</label>
+                    <select id="vehicule" name="vehicule" style="width:100%" required>
+                        {% if not fiche.vehicule %}
+                            <option value="" selected disabled>— Choisissez votre véhicule —</option>
+                        {% endif %}
+                        {# Comparaison par tranche : une puissance hors liste (8 CV) correspond à « 7 CV et + ». #}
+                        {% for v in vehicules %}
+                            <option value="{{ v.id }}"
+                                {{ fiche.vehicule and fiche.vehicule.libelle == v.libelle ? 'selected' }}>
+                                {{ v.libelle }} — {{ v.tarifKm|number_format(2, ',', ' ') }} €/km
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-p" type="submit">Enregistrer ce véhicule</button>
+            </form>
+        {% else %}
+            <p>
+                {% if fiche.vehicule %}
+                    <strong>{{ fiche.vehicule.libelle }}</strong>
+                    — {{ fiche.tarifKm|number_format(2, ',', ' ') }} €/km
+                {% else %}
+                    <span class="detail">Aucun véhicule renseigné sur cette fiche.</span>
+                {% endif %}
+            </p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="carte">
+    <h2>Frais forfaitisés</h2>
+    <div class="corps">
+        <form method="post" action="{{ path('visiteur_frais_forfait', {id: fiche.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('forfait' ~ fiche.id) }}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Frais</th>
+                        <th class="num">Quantité</th>
+                        <th class="num">Montant unitaire</th>
+                        <th class="num">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for code, libelle in codes %}
+                    {% set unitaire = code == 'KM' ? fiche.tarifKm : tarifs[libelle]|default(0) %}
+                    {# Sans véhicule déclaré, le kilométrage n'a pas de tarif : il ne se saisit pas encore. #}
+                    {% set saisissable = fiche.estModifiable and (code != 'KM' or fiche.vehicule) %}
+                    <tr>
+                        <td>
+                            {{ libelle }}
+                            {% if code == 'KM' %}
+                                {% set calcule = fiche.kilometrageCalcule|round %}
+                                <div class="detail" style="font-size:11px">
+                                    {% if fiche.vehicule %}barème {{ fiche.vehicule.libelle }}{% elseif fiche.estModifiable %}véhicule à déclarer{% else %}aucun véhicule déclaré{% endif %}
+                                    {% if fiche.trajets|length > 0 %}
+                                        · {{ fiche.trajets|length }} trajet{{ fiche.trajets|length > 1 ? 's' }}
+                                        = {{ calcule|number_format(0, ',', ' ') }} km
+                                    {% endif %}
+                                </div>
+                                {% if calcule > 0 and (quantites[libelle]|round) != calcule %}
+                                    <div style="font-size:11px; color:var(--orange)">
+                                        valeur saisie différente du calcul des trajets
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                        <td class="num">
+                            {% if saisissable %}
+                                <input type="number" min="0" step="1"
+                                       name="quantites[{{ code }}]"
+                                       value="{{ quantites[libelle]|round }}">
+                            {% else %}
+                                {{ quantites[libelle]|number_format(0, ',', ' ') }}
+                            {% endif %}
+                            {{ code == 'KM' ? 'km' : 'j' }}
+                        </td>
+                        <td class="num">{{ unitaire|number_format(2, ',', ' ') }} €</td>
+                        <td class="num">{{ (quantites[libelle] * unitaire)|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">Sous-total forfaitisé</td>
+                        <td class="num">{{ fiche.montantForfait|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            {% if fiche.estModifiable %}
+                <div class="actions">
+                    <button class="btn btn-p" type="submit">Enregistrer les quantités</button>
+                </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<div class="carte">
+    <h2>Trajets — kilométrage calculé</h2>
+    <div class="corps">
+        <div class="note">Indiquez les deux villes de chaque déplacement : le système calcule la
+            distance routière. Chaque ajout ou suppression de trajet reporte la somme obtenue dans
+            la quantité kilométrique ci-dessus, que vous restez libre de corriger à la main.</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Trajet</th>
+                    <th>Calcul</th>
+                    <th class="num">Distance</th>
+                    {% if fiche.estModifiable %}<th class="num">Action</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for trajet in fiche.trajets %}
+                <tr>
+                    <td>{{ trajet.dateTrajet|date('d/m/Y') }}</td>
+                    <td>
+                        {{ trajet.villeDepart }} → {{ trajet.villeArrivee }}
+                        {% if trajet.allerRetour %}
+                            <span class="badge b-creee" style="margin-left:6px">aller-retour</span>
+                        {% endif %}
+                    </td>
+                    <td><span class="detail" style="font-size:11px">{{ trajet.sourceLibelle }}</span></td>
+                    <td class="num">
+                        {{ trajet.distanceTotale|number_format(2, ',', ' ') }} km
+                        {% if trajet.allerRetour %}
+                            <div class="detail" style="font-size:11px">
+                                {{ trajet.distanceKm|number_format(2, ',', ' ') }} km × 2</div>
+                        {% endif %}
+                    </td>
+                    {% if fiche.estModifiable %}
+                        <td class="num act">
+                            <form method="post" action="{{ path('visiteur_trajet_suppr', {id: trajet.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('trajetsuppr' ~ trajet.id) }}">
+                                <button class="btn btn-r btn-mini" type="submit">Supprimer</button>
+                            </form>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% else %}
+                <tr><td colspan="{{ fiche.estModifiable ? 5 : 4 }}" class="vide">Aucun trajet saisi</td></tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">Kilométrage total retenu</td>
+                    <td class="num">{{ fiche.kilometrageCalcule|number_format(2, ',', ' ') }} km</td>
+                    {% if fiche.estModifiable %}<td></td>{% endif %}
+                </tr>
+            </tfoot>
+        </table>
+
+        {% if fiche.estModifiable and not fiche.vehicule %}
+            <div class="alerte" style="margin:14px 0 0">Déclarez d'abord votre véhicule, en haut de la
+                page : les trajets donnent lieu à des frais kilométriques, dont le tarif en dépend.</div>
+        {% elseif fiche.estModifiable %}
+            <h3>Ajouter un trajet</h3>
+            <form method="post" action="{{ path('visiteur_trajet_ajout', {id: fiche.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('trajet' ~ fiche.id) }}">
+                <div class="ligne">
+                    <div>
+                        <label for="date_trajet">Date</label>
+                        <input type="date" id="date_trajet" name="date_trajet" required
+                               value="{{ 'now'|date('Y-m-d') }}">
+                    </div>
+                    <div style="flex:1; min-width:170px">
+                        <label for="ville_depart">Ville de départ</label>
+                        <input type="text" id="ville_depart" name="ville_depart" required
+                               style="width:100%" placeholder="Paris" autocomplete="off">
+                    </div>
+                    <div style="flex:1; min-width:170px">
+                        <label for="ville_arrivee">Ville d'arrivée</label>
+                        <input type="text" id="ville_arrivee" name="ville_arrivee" required
+                               style="width:100%" placeholder="Lyon" autocomplete="off">
+                    </div>
+                    <div>
+                        <label for="aller_retour">Aller-retour</label>
+                        <input type="checkbox" id="aller_retour" name="aller_retour" value="1"
+                               style="width:auto; transform:scale(1.3); margin:8px 0 0 4px">
+                    </div>
+                    <button class="btn btn-p" type="submit">Calculer et ajouter</button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="carte">
+    <h2>Frais hors forfait</h2>
+    <div class="corps">
+        <div class="note">Tout frais hors forfait doit être appuyé par une facture acquittée.
+            Sans justificatif, le service comptable peut le refuser.</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Libellé</th>
+                    <th>Justificatif</th>
+                    <th class="num">Montant</th>
+                    {% if fiche.estModifiable %}<th class="num">Action</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for ligne in fiche.fraisHorsForfait %}
+                <tr class="{{ ligne.refuse ? 'refusee' }}">
+                    <td>{{ ligne.dateFrais|date('d/m/Y') }}</td>
+                    <td>
+                        {{ ligne.libelle }}
+                        {% if ligne.refuse %}
+                            <div class="detail" style="font-size:11px">refusé par le service comptable</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for justificatif in ligne.justificatifs %}
+                            <a class="justif" href="{{ path('visiteur_justificatif_voir', {id: justificatif.id}) }}" target="_blank">
+                                {{ justificatif.nomOriginal }}</a>
+                            <span class="detail" style="font-size:11px">({{ justificatif.tailleLisible }})</span><br>
+                        {% else %}
+                            <span class="justif absent">aucun justificatif</span>
+                        {% endfor %}
+
+                        {% if fiche.estModifiable %}
+                            <form method="post" enctype="multipart/form-data" style="margin-top:4px"
+                                  action="{{ path('visiteur_justificatif_ajout', {id: ligne.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('justif' ~ ligne.id) }}">
+                                <input type="file" name="justificatif" accept=".pdf,.jpg,.jpeg,.png,.webp" style="font-size:11px">
+                                <button class="btn btn-s btn-mini" type="submit">Déposer</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                    <td class="num">{{ ligne.montant|number_format(2, ',', ' ') }} €</td>
+                    {% if fiche.estModifiable %}
+                        <td class="num act">
+                            <form method="post" action="{{ path('visiteur_frais_suppr', {id: ligne.id}) }}"
+                                  onsubmit="return confirm('Supprimer définitivement ce frais et ses justificatifs ?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('suppr' ~ ligne.id) }}">
+                                <button class="btn btn-r btn-mini" type="submit">Supprimer</button>
+                            </form>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% else %}
+                <tr><td colspan="{{ fiche.estModifiable ? 5 : 4 }}" class="vide">Aucun frais hors forfait saisi</td></tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">Sous-total retenu</td>
+                    <td class="num">{{ fiche.montantHorsForfait|number_format(2, ',', ' ') }} €</td>
+                    {% if fiche.estModifiable %}<td></td>{% endif %}
+                </tr>
+            </tfoot>
+        </table>
+
+        {% if fiche.estModifiable %}
+            <h3>Ajouter un frais hors forfait</h3>
+            <form method="post" enctype="multipart/form-data"
+                  action="{{ path('visiteur_frais_ajout', {id: fiche.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('horsforfait' ~ fiche.id) }}">
+                <div class="ligne">
+                    <div>
+                        <label for="date_frais">Date</label>
+                        <input type="date" id="date_frais" name="date_frais" required
+                               value="{{ 'now'|date('Y-m-d') }}" max="{{ 'now'|date('Y-m-d') }}">
+                    </div>
+                    <div style="flex:1; min-width:200px">
+                        <label for="libelle">Libellé</label>
+                        <input type="text" id="libelle" name="libelle" maxlength="100" required
+                               style="width:100%" placeholder="Repas de représentation…">
+                    </div>
+                    <div>
+                        <label for="montant">Montant (€)</label>
+                        <input type="text" id="montant" name="montant" required inputmode="decimal" placeholder="0,00">
+                    </div>
+                    <div>
+                        <label for="justificatif">Facture</label>
+                        <input type="file" id="justificatif" name="justificatif" accept=".pdf,.jpg,.jpeg,.png,.webp">
+                    </div>
+                    <button class="btn btn-p" type="submit">Ajouter</button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="carte">
+    <h2>Récapitulatif</h2>
+    <div class="corps">
+        <table>
+            <tbody>
+                <tr><td>Frais forfaitisés</td><td class="num">{{ fiche.montantForfait|number_format(2, ',', ' ') }} €</td></tr>
+                <tr><td>Frais hors forfait retenus</td><td class="num">{{ fiche.montantHorsForfait|number_format(2, ',', ' ') }} €</td></tr>
+                {% if fiche.montantRefuse > 0 %}
+                    <tr><td>Frais refusés (reportés au mois suivant)</td>
+                        <td class="num">− {{ fiche.montantRefuse|number_format(2, ',', ' ') }} €</td></tr>
+                {% endif %}
+            </tbody>
+            <tfoot>
+                <tr><td>Total {{ fiche.periodeLibelle }}</td>
+                    <td class="num">{{ fiche.total|number_format(2, ',', ' ') }} €</td></tr>
+            </tfoot>
+        </table>
+        <div class="actions">
+            <a class="btn btn-s" href="{{ path('visiteur_fiche_pdf', {id: fiche.id}) }}" target="_blank">Imprimer en PDF</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

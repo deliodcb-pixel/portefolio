@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}GSB — Gestion des frais{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.1em%22 font-size=%2296%22>🧾</text></svg>">
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('css/gsb.css') }}">
+    {% endblock %}
+    {% block javascripts %}
+        <script src="{{ asset('js/formulaires.js') }}" defer></script>
+    {% endblock %}
+</head>
+<body>
+
+{% if app.user %}
+    <div class="bandeau">
+        <h1>GSB — Gestion des frais de déplacement</h1>
+        <div class="user">
+            {{ app.user.nomComplet }}
+            <span class="profil">
+                {%- if is_granted('ROLE_ADMIN') %}administration
+                {%- elseif is_granted('ROLE_COMPTABLE') %}service comptable
+                {%- else %}visiteur médical{% endif -%}
+            </span>
+            <a href="{{ path('app_logout') }}">Déconnexion</a>
+        </div>
+    </div>
+    <nav>
+        {% block nav %}
+            {# L'administrateur cumule la gestion des comptes et le traitement des fiches. #}
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin_comptes') }}" class="{{ menu|default('') == 'comptes' ? 'actif' }}">Comptes</a>
+            {% endif %}
+            {% if is_granted('ROLE_COMPTABLE') %}
+                <a href="{{ path('comptable_validation_selection') }}" class="{{ menu|default('') == 'validation' ? 'actif' }}">Valider les fiches</a>
+                <a href="{{ path('comptable_paiement') }}" class="{{ menu|default('') == 'paiement' ? 'actif' }}">Mise en paiement</a>
+                <a href="{{ path('comptable_suivi') }}" class="{{ menu|default('') == 'suivi' ? 'actif' }}">Suivi</a>
+                <a href="{{ path('comptable_editions') }}" class="{{ menu|default('') == 'editions' ? 'actif' }}">Recherche de PDF</a>
+            {% elseif is_granted('ROLE_VISITEUR') %}
+                <a href="{{ path('visiteur_fiche_courante') }}" class="{{ menu|default('') == 'saisie' ? 'actif' }}">Ma fiche du mois</a>
+                <a href="{{ path('visiteur_historique') }}" class="{{ menu|default('') == 'historique' ? 'actif' }}">Mes fiches précédentes</a>
+            {% endif %}
+        {% endblock %}
+    </nav>
+{% endif %}
+
+<main>
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash flash-{{ type }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    {% block body %}{% endblock %}
+</main>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Suivi des fiches — GSB{% endblock %}
+
+{% block body %}
+
+{% set titres = {
+    'CREEE': 'En saisie chez le visiteur',
+    'CLOTUREE': 'Clôturées, en attente de validation',
+    'VALIDEE': 'Validées',
+    'MISE_EN_PAIEMENT': 'Mises en paiement',
+    'REMBOURSEE': 'Remboursées'
+} %}
+
+<div class="note">Suivi du cycle de vie des fiches, de la saisie par le visiteur
+    jusqu'au remboursement effectif.</div>
+
+{% for statut, fiches in par_statut %}
+    <div class="carte">
+        <h2>{{ titres[statut] }} — {{ fiches|length }}</h2>
+        <div class="corps">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Visiteur</th>
+                        <th>Période</th>
+                        <th class="num">Forfaitisés</th>
+                        <th class="num">Hors forfait</th>
+                        <th class="num">Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for fiche in fiches %}
+                    <tr>
+                        <td>{{ fiche.visiteur.nomComplet }}</td>
+                        <td>{{ fiche.periodeLibelle }}</td>
+                        <td class="num">{{ fiche.montantForfait|number_format(2, ',', ' ') }} €</td>
+                        <td class="num">{{ fiche.montantHorsForfait|number_format(2, ',', ' ') }} €</td>
+                        <td class="num">{{ fiche.total|number_format(2, ',', ' ') }} €</td>
+                        <td class="num">
+                            <a class="btn btn-s btn-mini" target="_blank"
+                               href="{{ path('comptable_fiche_pdf', {id: fiche.id}) }}">PDF</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6" class="vide">Aucune fiche dans cet état</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endfor %}
+
+{% endblock %}

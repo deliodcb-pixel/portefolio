@@ -1000,3 +1000,15 @@ details[open] .bloc-plus::after { transform: translate(-50%, -50%) rotate(90deg)
   padding: 0 5px;
   overflow-wrap: anywhere;
 }
+.bareme {
+  margin-top: 10px;
+  border-collapse: collapse;
+  font-family: var(--ff-mono);
+  font-size: .8rem;
+}
+.bareme th, .bareme td {
+  border: 1px solid var(--line);
+  padding: 6px 14px;
+  text-align: left;
+}
+.bareme th { color: var(--fg-muted); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }

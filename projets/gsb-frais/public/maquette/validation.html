@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maquette - Valider fiche de frais</title>
+<style>
+  :root{
+    --bleu:#1b5e9e; --bleu-fonce:#134876; --bleu-clair:#e8f1f9;
+    --vert:#5a9e3d; --rouge:#c0392b; --orange:#d68910;
+    --gris:#6b7684; --bord:#d5dbe2; --fond:#f4f6f8; --blanc:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font:14px/1.5 "Segoe UI",Arial,sans-serif;background:var(--fond);color:#222}
+  .bandeau{background:var(--bleu);color:#fff;padding:12px 24px;display:flex;
+    align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  .bandeau h1{font-size:18px;font-weight:600}
+  .bandeau .user{font-size:13px;opacity:.9}
+  .bandeau .user a{color:#fff;margin-left:14px}
+  nav{background:var(--bleu-fonce);padding:0 24px;display:flex;gap:2px;flex-wrap:wrap}
+  nav a{color:#cfe0ef;text-decoration:none;padding:10px 16px;font-size:13px}
+  nav a.actif{background:var(--fond);color:var(--bleu);font-weight:600}
+  main{max-width:1000px;margin:24px auto;padding:0 16px}
+  .ecran{background:var(--blanc);border:1px solid var(--bord);border-radius:6px;
+    margin-bottom:32px;overflow:hidden}
+  .ecran > h2{background:var(--bleu-clair);color:var(--bleu-fonce);font-size:14px;
+    padding:10px 18px;border-bottom:1px solid var(--bord)}
+  .corps{padding:18px}
+  .note{background:#fffbe6;border-left:3px solid var(--orange);padding:8px 12px;
+    font-size:12px;color:#7a5c00;margin-bottom:16px}
+  label{display:block;font-size:12px;color:var(--gris);margin-bottom:4px;font-weight:600}
+  select,input[type=text],input[type=number]{padding:7px 10px;border:1px solid var(--bord);
+    border-radius:4px;font-size:14px;font-family:inherit;background:#fff}
+  .ligne{display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap}
+  .btn{padding:8px 18px;border:0;border-radius:4px;font-size:13px;font-weight:600;
+    cursor:pointer;font-family:inherit}
+  .btn-p{background:var(--bleu);color:#fff}
+  .btn-v{background:var(--vert);color:#fff}
+  .btn-r{background:var(--rouge);color:#fff}
+  .btn-s{background:#fff;color:var(--gris);border:1px solid var(--bord)}
+  .btn-mini{padding:4px 10px;font-size:12px}
+  table{width:100%;border-collapse:collapse;margin:10px 0}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--bord);text-align:left;font-size:13px}
+  th{background:#fafbfc;color:var(--gris);font-size:11px;text-transform:uppercase;
+    letter-spacing:.4px}
+  td.num,th.num{text-align:right}
+  tfoot td{font-weight:700;border-top:2px solid var(--bleu);border-bottom:0;background:#fafbfc}
+  .fiche-tete{display:flex;justify-content:space-between;align-items:center;
+    background:var(--bleu-clair);padding:12px 16px;border-radius:4px;margin-bottom:18px;
+    flex-wrap:wrap;gap:10px}
+  .fiche-tete strong{font-size:16px;color:var(--bleu-fonce)}
+  .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;
+    font-weight:700;text-transform:uppercase}
+  .b-cl{background:#fdebd0;color:#8a5a00}
+  .b-va{background:#d5f0c8;color:#2f6b14}
+  h3{font-size:13px;color:var(--bleu-fonce);margin:22px 0 4px;
+    padding-bottom:5px;border-bottom:2px solid var(--bleu-clair)}
+  h3:first-of-type{margin-top:0}
+  .alerte{background:#fdecea;border-left:3px solid var(--rouge);padding:10px 14px;
+    color:#8b2419;font-size:13px;border-radius:0 4px 4px 0}
+  .succes{background:#eaf6e4;border-left:3px solid var(--vert);padding:10px 14px;
+    color:#2f6b14;font-size:13px;border-radius:0 4px 4px 0;margin-bottom:14px}
+  .refusee{background:#fdf2f1;color:var(--gris)}
+  .refusee td:not(.act){text-decoration:line-through;opacity:.65}
+  .justif{font-size:12px;color:var(--bleu);text-decoration:none}
+  .justif.absent{color:var(--rouge);text-decoration:none}
+  .actions{display:flex;gap:10px;justify-content:flex-end;padding-top:18px;
+    margin-top:18px;border-top:1px solid var(--bord);flex-wrap:wrap}
+  .etapes{font-size:11px;color:var(--gris);padding:6px 18px;background:#fafbfc;
+    border-top:1px solid var(--bord)}
+  .ctrl{font-size:11px;color:var(--rouge);display:block;margin-top:2px}
+</style>
+</head>
+<body>
+
+<div class="bandeau">
+  <h1>GSB &mdash; Gestion des frais de déplacement</h1>
+  <div class="user">Connecté : <strong>C. Gasset</strong> (service comptable)<a href="#">Déconnexion</a></div>
+</div>
+<nav>
+  <a href="#">Accueil</a>
+  <a href="#" class="actif">Valider les fiches</a>
+  <a href="#">Mise en paiement</a>
+  <a href="#">Suivi des remboursements</a>
+  <a href="#">Éditions PDF</a>
+</nav>
+
+<main>
+
+  <!-- ÉCRAN 1 -->
+  <section class="ecran">
+    <h2>Écran 1 &mdash; Sélection du visiteur et du mois <em>(étapes 1 à 3)</em></h2>
+    <div class="corps">
+      <div class="note">Seuls les visiteurs ayant au moins une fiche <strong>clôturée (CL)</strong>
+        non encore validée sont proposés. Le script de clôture est lancé en début de campagne.</div>
+      <form class="ligne">
+        <div>
+          <label for="v">Visiteur</label>
+          <select id="v">
+            <option>Sélectionner…</option>
+            <option selected>LEPLAT AUFRAY Jamy &mdash; NRD/125-01</option>
+            <option>BENTOT Pascal &mdash; NRD/125-02</option>
+            <option>BEDOS Christian &mdash; CEN/112-07</option>
+          </select>
+        </div>
+        <div>
+          <label for="m">Mois</label>
+          <select id="m">
+            <option selected>Décembre 2010</option>
+            <option>Novembre 2010</option>
+            <option>Octobre 2010</option>
+          </select>
+        </div>
+        <button type="button" class="btn btn-p">Afficher la fiche</button>
+      </form>
+    </div>
+    <div class="etapes">UC « Valider fiche de frais » &mdash; étapes 1, 2, 3 du scénario nominal</div>
+  </section>
+
+  <!-- EXCEPTION -->
+  <section class="ecran">
+    <h2>Écran 1 bis &mdash; Exception 4-a : aucune fiche pour ce visiteur ce mois</h2>
+    <div class="corps">
+      <div class="alerte">Pas de fiche de frais pour ce visiteur ce mois.</div>
+      <div class="actions"><button type="button" class="btn btn-s">Retour à la sélection</button></div>
+    </div>
+    <div class="etapes">Exception 4-a &mdash; retour à l'étape 2</div>
+  </section>
+
+  <!-- ÉCRAN 2 -->
+  <section class="ecran">
+    <h2>Écran 2 &mdash; Détail et validation de la fiche <em>(étapes 4 à 9)</em></h2>
+    <div class="corps">
+
+      <div class="fiche-tete">
+        <div>
+          <strong>Jamy LEPLAT AUFRAY</strong> &mdash; matricule NRD/125-01<br>
+          <span style="color:var(--gris)">Fiche de décembre 2010 &middot; 2 justificatifs reçus
+            &middot; véhicule déclaré : 5/6 CV Essence (0,67 €/km)</span>
+        </div>
+        <span class="badge b-cl">Clôturée</span>
+      </div>
+
+      <div class="succes">Les quantités modifiées ont été enregistrées. Totaux actualisés. <em>(étape 6)</em></div>
+
+      <h3>Frais forfaitisés &mdash; contrôle et correction <em>(étape 5)</em></h3>
+      <div class="note">Contrôle attendu : le nombre de jours saisis ne doit pas dépasser le nombre
+        de jours effectivement travaillés, et le kilométrage doit rester cohérent avec le secteur.</div>
+      <table>
+        <thead>
+          <tr><th>Frais forfaitisé</th><th class="num">Quantité saisie</th>
+              <th class="num">Quantité retenue</th><th class="num">Montant unitaire</th>
+              <th class="num">Total</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Nuitée hôtel</td><td class="num">9</td>
+              <td class="num"><input type="number" value="9" style="width:70px" class="num"></td>
+              <td class="num">80,00 €</td><td class="num">720,00 €</td></tr>
+          <tr><td>Repas midi</td><td class="num">12</td>
+              <td class="num"><input type="number" value="12" style="width:70px"></td>
+              <td class="num">25,00 €</td><td class="num">300,00 €</td></tr>
+          <tr><td>Forfait étape</td><td class="num">2</td>
+              <td class="num"><input type="number" value="2" style="width:70px"></td>
+              <td class="num">110,00 €</td><td class="num">220,00 €</td></tr>
+          <tr><td>Frais kilométrique
+                  <span class="ctrl">⚠ 750 km déclarés &mdash; au-delà de la moyenne du secteur, à vérifier</span></td>
+              <td class="num">750</td>
+              <td class="num"><input type="number" value="750" style="width:70px"></td>
+              <td class="num">0,67 €</td><td class="num">502,50 €</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="4">Sous-total forfaitisé</td><td class="num">1 742,50 €</td></tr></tfoot>
+      </table>
+      <div style="text-align:right"><button type="button" class="btn btn-p btn-mini">Actualiser les quantités</button></div>
+
+      <h3>Frais hors forfait &mdash; justificatifs et refus <em>(étape 7)</em></h3>
+      <div class="note">Un frais non justifié par un document professionnel est refusé. Le refus est
+        définitif pour la fiche ; le visiteur en est informé, sans que le motif soit enregistré.</div>
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Libellé</th><th>Justificatif</th>
+              <th class="num">Montant</th><th class="num">Action</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>18/12/2010</td><td>Repas de représentation</td>
+            <td><a href="#" class="justif">facture_1812.pdf</a></td>
+            <td class="num">156,00 €</td>
+            <td class="num act"><button type="button" class="btn btn-r btn-mini">Refuser</button></td>
+          </tr>
+          <tr>
+            <td>22/12/2010</td><td>Achat fleuriste soirée « MediLog »</td>
+            <td><a href="#" class="justif">facture_2212.jpg</a></td>
+            <td class="num">120,30 €</td>
+            <td class="num act"><button type="button" class="btn btn-r btn-mini">Refuser</button></td>
+          </tr>
+          <tr class="refusee">
+            <td>27/12/2010</td><td>Cadeau personnel</td>
+            <td><span class="justif absent">aucun justificatif</span></td>
+            <td class="num">89,00 €</td>
+            <td class="num act"><button type="button" class="btn btn-s btn-mini">Annuler le refus</button></td>
+          </tr>
+        </tbody>
+        <tfoot><tr><td colspan="3">Sous-total hors forfait retenu</td><td class="num">276,30 €</td><td></td></tr></tfoot>
+      </table>
+
+      <h3>Récapitulatif</h3>
+      <table>
+        <tbody>
+          <tr><td>Frais forfaitisés</td><td class="num">1 742,50 €</td></tr>
+          <tr><td>Frais hors forfait retenus</td><td class="num">276,30 €</td></tr>
+          <tr><td>Frais refusés (reportés au mois suivant)</td><td class="num">&minus; 89,00 €</td></tr>
+        </tbody>
+        <tfoot><tr><td>Montant validé 12/2010</td><td class="num">2 018,80 €</td></tr></tfoot>
+      </table>
+
+      <div class="actions">
+        <button type="button" class="btn btn-s">Retour à la sélection</button>
+        <button type="button" class="btn btn-p">Générer le PDF</button>
+        <button type="button" class="btn btn-v">Valider la fiche <em>(étape 8)</em></button>
+      </div>
+    </div>
+    <div class="etapes">Étape 9 &mdash; la fiche passe à l'état « Validée » et la date de modification est mise à jour</div>
+  </section>
+
+  <!-- ÉCRAN 3 -->
+  <section class="ecran">
+    <h2>Écran 3 &mdash; Confirmation <em>(étape 9)</em></h2>
+    <div class="corps">
+      <div class="fiche-tete">
+        <div><strong>Jamy LEPLAT AUFRAY</strong> &mdash; fiche de décembre 2010<br>
+          <span style="color:var(--gris)">Validée le 07/01/2011 &middot; montant retenu 2 018,80 €</span></div>
+        <span class="badge b-va">Validée</span>
+      </div>
+      <div class="succes">La fiche est validée. Elle apparaît désormais dans la liste
+        « Mise en paiement », échéance au 20/01/2011.</div>
+      <div class="actions">
+        <button type="button" class="btn btn-s">Valider une autre fiche</button>
+        <button type="button" class="btn btn-p">Télécharger le PDF</button>
+      </div>
+    </div>
+    <div class="etapes">Post-condition : état « Validée », date de modification à jour</div>
+  </section>
+
+</main>
+</body>
+</html>

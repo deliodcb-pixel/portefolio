@@ -1,0 +1,220 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Validation — {{ fiche.visiteur.nomComplet }} — GSB{% endblock %}
+
+{% block body %}
+
+{% set validable = fiche.statut.value == 'CLOTUREE' %}
+
+<div class="fiche-tete">
+    <div>
+        <strong>{{ fiche.visiteur.nomComplet }}</strong>
+        <div class="detail">
+            Fiche de {{ fiche.periodeLibelle }}
+            · {{ fiche.nbJustificatifs }} justificatif{{ fiche.nbJustificatifs > 1 ? 's' }} reçu{{ fiche.nbJustificatifs > 1 ? 's' }}
+            {% if fiche.vehicule %}
+                · véhicule déclaré {{ fiche.vehicule.libelle }}
+                ({{ fiche.tarifKm|number_format(2, ',', ' ') }} €/km)
+            {% else %}
+                · aucun véhicule déclaré par le visiteur
+            {% endif %}
+        </div>
+    </div>
+    <span class="badge b-{{ fiche.statut.value|lower }}">{{ fiche.statut.libelleCourt }}</span>
+</div>
+
+{% if not validable %}
+    <div class="note">Cette fiche est {{ fiche.statut.libelle|lower }} : elle n'est plus modifiable.
+        {% if fiche.validateur %}Validée par {{ fiche.validateur }}
+            le {{ fiche.dateValidation|date('d/m/Y') }}.{% endif %}</div>
+{% endif %}
+
+<div class="carte">
+    <h2>Frais forfaitisés — contrôle et correction</h2>
+    <div class="corps">
+        <div class="note">Vérifiez que le nombre de jours déclarés ne dépasse pas le nombre de
+            jours effectivement travaillés et que le kilométrage reste cohérent avec le secteur.</div>
+
+        <form method="post" action="{{ path('comptable_forfait_maj', {id: fiche.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('cforfait' ~ fiche.id) }}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Frais</th>
+                        <th class="num">Quantité retenue</th>
+                        <th class="num">Montant unitaire</th>
+                        <th class="num">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for code, libelle in codes %}
+                    {% set unitaire = code == 'KM' ? fiche.tarifKm : tarifs[libelle]|default(0) %}
+                    <tr>
+                        <td>{{ libelle }}</td>
+                        <td class="num">
+                            {# Sans véhicule déclaré, le kilométrage n'a pas de tarif : il ne se corrige pas. #}
+                            {% if validable and (code != 'KM' or fiche.vehicule) %}
+                                <input type="number" min="0" step="1"
+                                       name="quantites[{{ code }}]" value="{{ quantites[libelle]|round }}">
+                            {% else %}
+                                {{ quantites[libelle]|number_format(0, ',', ' ') }}
+                            {% endif %}
+                            {{ code == 'KM' ? 'km' : 'j' }}
+                        </td>
+                        <td class="num">{{ unitaire|number_format(2, ',', ' ') }} €</td>
+                        <td class="num">{{ (quantites[libelle] * unitaire)|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">Sous-total forfaitisé</td>
+                        <td class="num">{{ fiche.montantForfait|number_format(2, ',', ' ') }} €</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            {% if validable %}
+                <div class="actions">
+                    <button class="btn btn-p" type="submit">Actualiser les quantités</button>
+                </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+{% if fiche.trajets|length > 0 %}
+<div class="carte">
+    <h2>Détail du kilométrage — {{ fiche.trajets|length }} trajet{{ fiche.trajets|length > 1 ? 's' }}</h2>
+    <div class="corps">
+        <div class="note">Les distances sont calculées par le système à partir des villes saisies
+            par le visiteur. Le visiteur a pu corriger à la main la quantité retenue ci-dessus :
+            comparez-la à la somme des trajets et rectifiez-la si besoin.</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Trajet</th>
+                    <th>Calcul</th>
+                    <th class="num">Distance</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for trajet in fiche.trajets %}
+                <tr>
+                    <td>{{ trajet.dateTrajet|date('d/m/Y') }}</td>
+                    <td>
+                        {{ trajet.villeDepart }} → {{ trajet.villeArrivee }}
+                        {% if trajet.allerRetour %}
+                            <span class="badge b-creee" style="margin-left:6px">aller-retour</span>
+                        {% endif %}
+                    </td>
+                    <td><span class="detail" style="font-size:11px">{{ trajet.sourceLibelle }}</span></td>
+                    <td class="num">{{ trajet.distanceTotale|number_format(2, ',', ' ') }} km</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">Somme des trajets</td>
+                    <td class="num">{{ fiche.kilometrageCalcule|number_format(2, ',', ' ') }} km</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<div class="carte">
+    <h2>Frais hors forfait — justificatifs et refus</h2>
+    <div class="corps">
+        <div class="note">Un frais non justifié par un document professionnel doit être refusé.
+            Le visiteur en est informé ; le motif du refus n'est pas enregistré, mais la ligne est
+            reportée sur la fiche du mois suivant.</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Libellé</th>
+                    <th>Justificatif</th>
+                    <th class="num">Montant</th>
+                    {% if validable %}<th class="num">Action</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for ligne in fiche.fraisHorsForfait %}
+                <tr class="{{ ligne.refuse ? 'refusee' }}">
+                    <td>{{ ligne.dateFrais|date('d/m/Y') }}</td>
+                    <td>{{ ligne.libelle }}</td>
+                    <td>
+                        {% for justificatif in ligne.justificatifs %}
+                            <a class="justif" target="_blank"
+                               href="{{ path('comptable_justificatif_voir', {id: justificatif.id}) }}">
+                                {{ justificatif.nomOriginal }}</a><br>
+                        {% else %}
+                            <span class="justif absent">aucun justificatif</span>
+                        {% endfor %}
+                    </td>
+                    <td class="num">{{ ligne.montant|number_format(2, ',', ' ') }} €</td>
+                    {% if validable %}
+                        <td class="num act">
+                            <form method="post" action="{{ path('comptable_refus_ligne', {id: ligne.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('refus' ~ ligne.id) }}">
+                                <button class="btn {{ ligne.refuse ? 'btn-s' : 'btn-r' }} btn-mini" type="submit">
+                                    {{ ligne.refuse ? 'Annuler le refus' : 'Refuser' }}
+                                </button>
+                            </form>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% else %}
+                <tr><td colspan="{{ validable ? 5 : 4 }}" class="vide">Aucun frais hors forfait</td></tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">Sous-total hors forfait retenu</td>
+                    <td class="num">{{ fiche.montantHorsForfait|number_format(2, ',', ' ') }} €</td>
+                    {% if validable %}<td></td>{% endif %}
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="carte">
+    <h2>Récapitulatif</h2>
+    <div class="corps">
+        <table>
+            <tbody>
+                <tr><td>Frais forfaitisés</td>
+                    <td class="num">{{ fiche.montantForfait|number_format(2, ',', ' ') }} €</td></tr>
+                <tr><td>Frais hors forfait retenus</td>
+                    <td class="num">{{ fiche.montantHorsForfait|number_format(2, ',', ' ') }} €</td></tr>
+                {% if fiche.montantRefuse > 0 %}
+                    <tr><td>Frais refusés (reportés au mois suivant)</td>
+                        <td class="num">− {{ fiche.montantRefuse|number_format(2, ',', ' ') }} €</td></tr>
+                {% endif %}
+            </tbody>
+            <tfoot>
+                <tr><td>Montant validé {{ '%02d/%04d'|format(fiche.mois, fiche.annee) }}</td>
+                    <td class="num">{{ fiche.total|number_format(2, ',', ' ') }} €</td></tr>
+            </tfoot>
+        </table>
+
+        <div class="actions">
+            <a class="btn btn-s" href="{{ path('comptable_validation_selection') }}">Retour à la sélection</a>
+            <a class="btn btn-s" href="{{ path('comptable_fiche_pdf', {id: fiche.id}) }}" target="_blank">Générer le PDF</a>
+            {% if validable %}
+                <form method="post" action="{{ path('comptable_valider', {id: fiche.id}) }}"
+                      onsubmit="return confirm('Valider définitivement cette fiche ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('valider' ~ fiche.id) }}">
+                    <button class="btn btn-v" type="submit">Valider la fiche</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
