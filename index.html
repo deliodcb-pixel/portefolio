@@ -14,6 +14,8 @@
 <link rel="preconnect" href="https://api.fontshare.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <!-- Titraille : Clash Display (Fontshare). Secours hors-ligne : Space Grotesk (Google Fonts). -->
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@600,500,400&f[]=general-sans@400,500,600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap">
@@ -57,7 +59,6 @@
       <ul class="nav-links">
         <li><a href="index.html#sommaire" class="is-active">Accueil</a></li>
         <li><a href="veille.html" class="nav-link-veille " data-transition="veille">Veille</a></li>
-        <li><a href="controle.html" class="" data-transition="contrôle">Contrôle</a></li>
         <li><a href="index.html#contact">Contact</a></li>
       </ul>
     </nav>
@@ -65,6 +66,10 @@
     <a href="reports/cv-delio-duchesne-brajon.pdf" download class="nav-cv magnetic" data-cursor="PDF">
       CV <span aria-hidden="true">↓</span>
     </a>
+
+    <button class="sound-toggle" aria-pressed="false" aria-label="Activer les sons de l'interface" data-cursor="Son">
+      <span class="sound-toggle-dot"></span> SON
+    </button>
 
     <button class="theme-toggle" aria-label="Basculer entre thème clair et sombre" data-cursor="Thème">
       <span class="theme-toggle-track"><span class="theme-toggle-thumb"></span></span>
@@ -78,9 +83,11 @@
   <div class="nav-mobile" id="navMobile">
     <a href="index.html#sommaire">Accueil</a>
     <a href="veille.html" data-transition="veille">Veille</a>
-    <a href="controle.html" data-transition="contrôle">Contrôle</a>
     <a href="index.html#contact">Contact</a>
     <a href="reports/cv-delio-duchesne-brajon.pdf" download>Télécharger le CV</a>
+    <button class="sound-toggle" aria-pressed="false" aria-label="Activer les sons de l'interface">
+      <span class="sound-toggle-dot"></span> Activer le son
+    </button>
     <button class="theme-toggle" aria-label="Basculer entre thème clair et sombre">
       <span class="theme-toggle-track"><span class="theme-toggle-thumb"></span></span>
       <span style="font-family:var(--ff-mono);font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;margin-left:12px;">Thème</span>
@@ -92,6 +99,16 @@
 
   <!-- ================= HERO ================= -->
   <section class="hero" id="top">
+    <!-- Scène TRACEROUTE (assets/js/traceroute.js) : caméra qui suit le
+         trajet d'un paquet réseau à travers les modules du BTS, façon
+         `traceroute`. Purement décorative (aria-hidden) : si WebGL ou le
+         script échoue, ou en mouvement réduit, elle disparaît sans rien
+         changer au contenu réel ci-dessous. -->
+    <canvas class="traceroute-canvas" id="tracerouteCanvas" aria-hidden="true"></canvas>
+    <div class="traceroute-hud" id="tracerouteHud" aria-hidden="true">
+      <div class="traceroute-hud-title">traceroute délio.dev</div>
+      <ol class="traceroute-hud-list" id="tracerouteHudList"></ol>
+    </div>
     <div class="wrap grid-12">
       <div class="hero-spine">Développeur — BTS SIO SLAM</div>
       <div class="hero-title-wrap">
@@ -150,41 +167,41 @@
             </summary>
             <div class="bloc-list">
               <p class="bloc-desc">HTML, CSS et gestion de projet (diagramme de Gantt) au fil des séances d&#039;Atelier Professionnel.</p>
-                            <a class="cr-item" href="reports/atelier-pro-rapport-1.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-atelier-pro-rapport-1.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">01</span>
-                <span class="cr-title">Rapport Atelier Pro n°1</span>
+                <span class="cr-title" data-flip-title>Rapport Atelier Pro n°1</span>
                 <span class="cr-date">11 sept. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/atelier-pro-tp-html.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-atelier-pro-tp-html.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">02</span>
-                <span class="cr-title">TP HTML</span>
+                <span class="cr-title" data-flip-title>TP HTML</span>
                 <span class="cr-date">17 sept. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/atelier-pro-tp-css.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-atelier-pro-tp-css.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">03</span>
-                <span class="cr-title">TP CSS</span>
+                <span class="cr-title" data-flip-title>TP CSS</span>
                 <span class="cr-date">20 sept. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/atelier-pro-html-css-avance-2.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-atelier-pro-html-css-avance-2.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">04</span>
-                <span class="cr-title">HTML/CSS avancé (2)</span>
+                <span class="cr-title" data-flip-title>HTML/CSS avancé (2)</span>
                 <span class="cr-date">2 oct. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/atelier-pro-tp-html-css-avance.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-atelier-pro-tp-html-css-avance.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">05</span>
-                <span class="cr-title">TP HTML &amp; CSS avancé</span>
+                <span class="cr-title" data-flip-title>TP HTML &amp; CSS avancé</span>
                 <span class="cr-date">16 oct. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/atelier-pro-diagramme-gantt.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-atelier-pro-diagramme-gantt.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">06</span>
-                <span class="cr-title">Diagramme de Gantt</span>
+                <span class="cr-title" data-flip-title>Diagramme de Gantt</span>
                 <span class="cr-date">17 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
                           </div>
           </details>
@@ -198,41 +215,41 @@
             </summary>
             <div class="bloc-list">
               <p class="bloc-desc">Découverte de Java et exercices d&#039;algorithmique : quiz, mini-jeux et manipulation d&#039;objets.</p>
-                            <a class="cr-item" href="reports/beauvallet-rapport-1.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-beauvallet-rapport-1.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">01</span>
-                <span class="cr-title">Rapport TP n°1</span>
+                <span class="cr-title" data-flip-title>Rapport TP n°1</span>
                 <span class="cr-date">11 sept. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/beauvallet-cr-java.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-beauvallet-cr-java.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">02</span>
-                <span class="cr-title">Compte rendu Java</span>
+                <span class="cr-title" data-flip-title>Compte rendu Java</span>
                 <span class="cr-date">14 sept. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/beauvallet-cr-java-2.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-beauvallet-cr-java-2.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">03</span>
-                <span class="cr-title">Compte rendu Java 2</span>
+                <span class="cr-title" data-flip-title>Compte rendu Java 2</span>
                 <span class="cr-date">22 sept. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/beauvallet-cr-shifumi.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-beauvallet-cr-shifumi.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">04</span>
-                <span class="cr-title">Compte rendu Shifumi</span>
+                <span class="cr-title" data-flip-title>Compte rendu Shifumi</span>
                 <span class="cr-date">6 oct. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/beauvallet-tp-java-05.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-beauvallet-tp-java-05.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">05</span>
-                <span class="cr-title">TP Java 05</span>
+                <span class="cr-title" data-flip-title>TP Java 05</span>
                 <span class="cr-date">14 oct. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/beauvallet-tp07-bataille-navale.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-beauvallet-tp07-bataille-navale.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">06</span>
-                <span class="cr-title">TP07 — Bataille navale</span>
+                <span class="cr-title" data-flip-title>TP07 — Bataille navale</span>
                 <span class="cr-date">26 nov. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
                           </div>
           </details>
@@ -246,41 +263,41 @@
             </summary>
             <div class="bloc-list">
               <p class="bloc-desc">Accès aux données (JDBC), SQL avancé, modélisation UML et une application JavaFX complète.</p>
-                            <a class="cr-item" href="reports/slam-s2-td3-jdbc.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-slam-s2-td3-jdbc.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">01</span>
-                <span class="cr-title">TD3 — JDBC</span>
+                <span class="cr-title" data-flip-title>TD3 — JDBC</span>
                 <span class="cr-date">26 janv. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/slam-s2-intro-uml.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-slam-s2-intro-uml.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">02</span>
-                <span class="cr-title">Introduction UML</span>
+                <span class="cr-title" data-flip-title>Introduction UML</span>
                 <span class="cr-date">25 févr. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/slam-s2-tp2-diagramme-classe.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-slam-s2-tp2-diagramme-classe.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">03</span>
-                <span class="cr-title">TP2 — Diagramme de classe</span>
+                <span class="cr-title" data-flip-title>TP2 — Diagramme de classe</span>
                 <span class="cr-date">1 mars 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/slam-s2-td7-banque.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-slam-s2-td7-banque.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">04</span>
-                <span class="cr-title">TD7 — Banque</span>
+                <span class="cr-title" data-flip-title>TD7 — Banque</span>
                 <span class="cr-date">17 mars 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/slam-s2-sql-avance.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-slam-s2-sql-avance.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">05</span>
-                <span class="cr-title">SQL avancé</span>
+                <span class="cr-title" data-flip-title>SQL avancé</span>
                 <span class="cr-date">27 avr. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/slam-s2-tp8-cardealer-javafx.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-slam-s2-tp8-cardealer-javafx.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">06</span>
-                <span class="cr-title">TP8 — CarDealer &amp; JavaFX</span>
+                <span class="cr-title" data-flip-title>TP8 — CarDealer &amp; JavaFX</span>
                 <span class="cr-date">21 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
                           </div>
           </details>
@@ -294,65 +311,65 @@
             </summary>
             <div class="bloc-list">
               <p class="bloc-desc">Requêtes SQL, droits utilisateurs, bases du PHP côté serveur et un projet complet de gestion de films.</p>
-                            <a class="cr-item" href="reports/b1-s2-bdd-leclerc.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-b1-s2-bdd-leclerc.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">01</span>
-                <span class="cr-title">BDD — Leclerc</span>
+                <span class="cr-title" data-flip-title>BDD — Leclerc</span>
                 <span class="cr-date">4 mars 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/b1-s2-bdd-zoo.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-b1-s2-bdd-zoo.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">02</span>
-                <span class="cr-title">BDD — Zoo</span>
+                <span class="cr-title" data-flip-title>BDD — Zoo</span>
                 <span class="cr-date">4 mars 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/b1-s2-gestion-users-php.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-b1-s2-gestion-users-php.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">03</span>
-                <span class="cr-title">Gestion des users / PHP</span>
+                <span class="cr-title" data-flip-title>Gestion des users / PHP</span>
                 <span class="cr-date">24 mars 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/b1-s2-php-1.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-b1-s2-php-1.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">04</span>
-                <span class="cr-title">PHP 1</span>
+                <span class="cr-title" data-flip-title>PHP 1</span>
                 <span class="cr-date">31 mars 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/b1-s2-php-2.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-b1-s2-php-2.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">05</span>
-                <span class="cr-title">PHP 2</span>
+                <span class="cr-title" data-flip-title>PHP 2</span>
                 <span class="cr-date">5 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/b1-s2-php-3.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-b1-s2-php-3.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">06</span>
-                <span class="cr-title">PHP 3</span>
+                <span class="cr-title" data-flip-title>PHP 3</span>
                 <span class="cr-date">5 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/b1-s2-php-4.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-b1-s2-php-4.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">07</span>
-                <span class="cr-title">PHP 4</span>
+                <span class="cr-title" data-flip-title>PHP 4</span>
                 <span class="cr-date">17 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/b1-s2-php-5.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-b1-s2-php-5.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">08</span>
-                <span class="cr-title">PHP 5</span>
+                <span class="cr-title" data-flip-title>PHP 5</span>
                 <span class="cr-date">17 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/b1-s2-gestion-films.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-b1-s2-gestion-films.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">09</span>
-                <span class="cr-title">Projet — Gestion de films</span>
+                <span class="cr-title" data-flip-title>Projet — Gestion de films</span>
                 <span class="cr-date">21 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/b1-s2-tp-droit-sql.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-b1-s2-tp-droit-sql.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">10</span>
-                <span class="cr-title">TP Droit SQL</span>
+                <span class="cr-title" data-flip-title>TP Droit SQL</span>
                 <span class="cr-date">21 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
                           </div>
           </details>
@@ -366,71 +383,71 @@
             </summary>
             <div class="bloc-list">
               <p class="bloc-desc">Réseau, Active Directory, GPO, DHCP, Linux et maintenance matérielle sous Windows Server.</p>
-                            <a class="cr-item" href="reports/sotoca-rapport-2.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-rapport-2.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">01</span>
-                <span class="cr-title">Rapport TP n°2</span>
+                <span class="cr-title" data-flip-title>Rapport TP n°2</span>
                 <span class="cr-date">11 sept. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-capture-ecran.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-capture-ecran.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">02</span>
-                <span class="cr-title">Capture d&#039;écran (doc. utilisateur)</span>
+                <span class="cr-title" data-flip-title>Capture d&#039;écran (doc. utilisateur)</span>
                 <span class="cr-date">13 sept. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-logiciels-diagnostic.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-logiciels-diagnostic.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">03</span>
-                <span class="cr-title">Logiciels de diagnostic</span>
+                <span class="cr-title" data-flip-title>Logiciels de diagnostic</span>
                 <span class="cr-date">13 sept. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-commandes-cmd.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-commandes-cmd.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">04</span>
-                <span class="cr-title">Commandes CMD</span>
+                <span class="cr-title" data-flip-title>Commandes CMD</span>
                 <span class="cr-date">7 oct. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-serveur-nas.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-serveur-nas.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">05</span>
-                <span class="cr-title">Serveur NAS</span>
+                <span class="cr-title" data-flip-title>Serveur NAS</span>
                 <span class="cr-date">11 oct. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-techcorp-ligne-commande.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-techcorp-ligne-commande.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">06</span>
-                <span class="cr-title">TechCorp — ligne de commande</span>
+                <span class="cr-title" data-flip-title>TechCorp — ligne de commande</span>
                 <span class="cr-date">14 oct. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-active-directory.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-active-directory.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">07</span>
-                <span class="cr-title">Active Directory</span>
+                <span class="cr-title" data-flip-title>Active Directory</span>
                 <span class="cr-date">17 mars 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-scenario-linux.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-scenario-linux.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">08</span>
-                <span class="cr-title">Scénario Linux</span>
+                <span class="cr-title" data-flip-title>Scénario Linux</span>
                 <span class="cr-date">10 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-connexion-domaine.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-connexion-domaine.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">09</span>
-                <span class="cr-title">Connexion au domaine</span>
+                <span class="cr-title" data-flip-title>Connexion au domaine</span>
                 <span class="cr-date">10 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-role-dhcp.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-role-dhcp.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">10</span>
-                <span class="cr-title">Rôle DHCP</span>
+                <span class="cr-title" data-flip-title>Rôle DHCP</span>
                 <span class="cr-date">17 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-gpo.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-gpo.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">11</span>
-                <span class="cr-title">Stratégies de groupe (GPO)</span>
+                <span class="cr-title" data-flip-title>Stratégies de groupe (GPO)</span>
                 <span class="cr-date">20 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
                           </div>
           </details>
@@ -444,47 +461,47 @@
             </summary>
             <div class="bloc-list">
               <p class="bloc-desc">RGPD, audit de sécurité, chiffrement PGP et codage sécurisé face aux injections SQL.</p>
-                            <a class="cr-item" href="reports/cyber-donnees-personnelles.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-cyber-donnees-personnelles.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">01</span>
-                <span class="cr-title">Données personnelles</span>
+                <span class="cr-title" data-flip-title>Données personnelles</span>
                 <span class="cr-date">2 oct. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/cyber-pia-rgpd.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-cyber-pia-rgpd.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">02</span>
-                <span class="cr-title">Étude PIA (RGPD)</span>
+                <span class="cr-title" data-flip-title>Étude PIA (RGPD)</span>
                 <span class="cr-date">8 nov. 2025</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/cyber-veille-securite.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-cyber-veille-securite.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">03</span>
-                <span class="cr-title">Veille sécurité</span>
+                <span class="cr-title" data-flip-title>Veille sécurité</span>
                 <span class="cr-date">2 mars 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/cyber-audit-securite.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-cyber-audit-securite.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">04</span>
-                <span class="cr-title">Audit de sécurité</span>
+                <span class="cr-title" data-flip-title>Audit de sécurité</span>
                 <span class="cr-date">8 mars 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/cyber-chiffrement-pgp.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-cyber-chiffrement-pgp.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">05</span>
-                <span class="cr-title">Chiffrement PGP</span>
+                <span class="cr-title" data-flip-title>Chiffrement PGP</span>
                 <span class="cr-date">8 mars 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/cyber-deep-freeze.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-cyber-deep-freeze.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">06</span>
-                <span class="cr-title">Deep Freeze</span>
+                <span class="cr-title" data-flip-title>Deep Freeze</span>
                 <span class="cr-date">26 avr. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/cyber-codage-securise.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-cyber-codage-securise.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">07</span>
-                <span class="cr-title">Codage sécurisé</span>
+                <span class="cr-title" data-flip-title>Codage sécurisé</span>
                 <span class="cr-date">21 mai 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
                           </div>
           </details>
@@ -494,7 +511,7 @@
         <div class="annee-num-col">
           <div class="annee-num display"><span>02</span></div>
           <div class="annee-periode">2de année · 2026 — 2027</div>
-          <div class="annee-count">4 matières — 24 comptes rendus</div>
+          <div class="annee-count">3 matières — 11 comptes rendus</div>
         </div>
 
         <div class="blocs reveal-group">
@@ -502,29 +519,23 @@
             <summary class="bloc-summary">
               <span class="bloc-title">Bloc 1 — Beauvallet</span>
               <span class="bloc-meta">
-                <span>3 CR</span>
+                <span>2 CR</span>
                 <span class="bloc-plus" aria-hidden="true"></span>
               </span>
             </summary>
             <div class="bloc-list">
-              <p class="bloc-desc">Progiciel de gestion intégré : exploitation d&#039;une base de données Excel multi-feuilles pour un concessionnaire, puis étude de gestion d&#039;un restaurant (charges, bilan, résultat).</p>
-                            <a class="cr-item" href="reports/pgi-td.pdf" download data-cursor="PDF">
+              <p class="bloc-desc">Progiciel de gestion intégré : exploitation d&#039;une base de données Excel multi-feuilles pour un concessionnaire.</p>
+                            <a class="cr-item" href="cr-pgi-td.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">01</span>
-                <span class="cr-title">TD PGI — Concessionnaire Senghor</span>
+                <span class="cr-title" data-flip-title>TD PGI — Concessionnaire Senghor</span>
                 <span class="cr-date">10 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/PGI_exercice.xlsx" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-pgi-exercice.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">02</span>
-                <span class="cr-title">PGI — fichier Excel</span>
+                <span class="cr-title" data-flip-title>PGI — fichier Excel</span>
                 <span class="cr-date">10 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                            <a class="cr-item" href="reports/td-restaurant-si7.xlsx" download data-cursor="XLSX">
-                <span class="cr-idx">03</span>
-                <span class="cr-title">TD restaurant (SI7) — fichier Excel</span>
-                <span class="cr-date">23 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
                           </div>
           </details>
@@ -532,89 +543,35 @@
             <summary class="bloc-summary">
               <span class="bloc-title">Bloc 2 — Beauvallet</span>
               <span class="bloc-meta">
-                <span>13 CR</span>
+                <span>4 CR</span>
                 <span class="bloc-plus" aria-hidden="true"></span>
               </span>
             </summary>
             <div class="bloc-list">
-              <p class="bloc-desc">Développement d&#039;applications : plateforme de gestion d&#039;événements en Symfony, prise en main de Flutter/Dart, persistance des données en PHP avec PDO, architecture MVC, initiation au PL/pgSQL, découverte de React et triggers PostgreSQL et MySQL.</p>
-                            <a class="cr-item" href="reports/eventify-compte-rendu.pdf" download data-cursor="PDF">
+              <p class="bloc-desc">Développement d&#039;applications : plateforme de gestion d&#039;événements en Symfony, prise en main de Flutter/Dart, persistance des données en PHP avec PDO et initiation au PL/pgSQL.</p>
+                            <a class="cr-item" href="cr-eventify-compte-rendu.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">01</span>
-                <span class="cr-title">Compte rendu — Eventify (Symfony)</span>
+                <span class="cr-title" data-flip-title>Compte rendu — Eventify (Symfony)</span>
                 <span class="cr-date">10 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/slam-b2-flutter-installation.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-slam-b2-flutter-installation.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">02</span>
-                <span class="cr-title">Installation de Flutter et Dart</span>
+                <span class="cr-title" data-flip-title>Installation de Flutter et Dart</span>
                 <span class="cr-date">11 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/slam-b2-tp-php-pdo.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-slam-b2-tp-php-pdo.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">03</span>
-                <span class="cr-title">TP PHP (PDO)</span>
+                <span class="cr-title" data-flip-title>TP PHP (PDO)</span>
                 <span class="cr-date">16 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/slam-b2-pl-pgsql.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-slam-b2-pl-pgsql.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">04</span>
-                <span class="cr-title">Initiation au PL/pgSQL</span>
+                <span class="cr-title" data-flip-title>Initiation au PL/pgSQL</span>
                 <span class="cr-date">17 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                            <a class="cr-item" href="reports/slam-b2-mvc-php-td3.pdf" download data-cursor="PDF">
-                <span class="cr-idx">05</span>
-                <span class="cr-title">TD3 — Architecture MVC (PHP)</span>
-                <span class="cr-date">17 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                            <a class="cr-item" href="reports/slam-b2-mvc-php-td4.pdf" download data-cursor="PDF">
-                <span class="cr-idx">06</span>
-                <span class="cr-title">TD4 — Architecture MVC en PHP</span>
-                <span class="cr-date">17 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                            <a class="cr-item" href="reports/slam-b2-flutter-interface.pdf" download data-cursor="PDF">
-                <span class="cr-idx">07</span>
-                <span class="cr-title">TP Flutter — Interface et thèmes</span>
-                <span class="cr-date">18 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                            <a class="cr-item" href="reports/slam-b2-mvc-php-td5-6.pdf" download data-cursor="PDF">
-                <span class="cr-idx">08</span>
-                <span class="cr-title">TP PHP 5 &amp; 6 — Architecture MVC</span>
-                <span class="cr-date">1 oct. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                            <a class="cr-item" href="reports/slam-b2-firebase.pdf" download data-cursor="PDF">
-                <span class="cr-idx">09</span>
-                <span class="cr-title">Firebase — Firestore et Authentication</span>
-                <span class="cr-date">2 oct. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                            <a class="cr-item" href="reports/slam-b2-triggers-1.pdf" download data-cursor="PDF">
-                <span class="cr-idx">10</span>
-                <span class="cr-title">TP — TRIGGERS 1 (PostgreSQL)</span>
-                <span class="cr-date">16 oct. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                            <a class="cr-item" href="reports/slam-b2-react-tp1.pdf" download data-cursor="PDF">
-                <span class="cr-idx">11</span>
-                <span class="cr-title">TP1 React — Installation et découverte</span>
-                <span class="cr-date">5 nov. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                            <a class="cr-item" href="reports/slam-b2-react-tp2.pdf" download data-cursor="PDF">
-                <span class="cr-idx">12</span>
-                <span class="cr-title">TP2 React — État, formulaires, API et routage</span>
-                <span class="cr-date">12 nov. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                            <a class="cr-item" href="reports/slam-b2-triggers-mysql.pdf" download data-cursor="PDF">
-                <span class="cr-idx">13</span>
-                <span class="cr-title">TP — TRIGGERS 2 (MySQL)</span>
-                <span class="cr-date">13 nov. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
                           </div>
           </details>
@@ -622,71 +579,41 @@
             <summary class="bloc-summary">
               <span class="bloc-title">Bloc 1 — Sotoca</span>
               <span class="bloc-meta">
-                <span>7 CR</span>
+                <span>5 CR</span>
                 <span class="bloc-plus" aria-hidden="true"></span>
               </span>
             </summary>
             <div class="bloc-list">
-              <p class="bloc-desc">Patrimoine informatique et gestion de parc : inventaire, valorisation et helpdesk. Autoformation par MOOC : choix d&#039;un parcours, planning de formation, suivi de l&#039;avancement et bilan de compétences.</p>
-                            <a class="cr-item" href="reports/patrimoine-informatique-tp01.pdf" download data-cursor="PDF">
+              <p class="bloc-desc">Patrimoine informatique et gestion de parc : inventaire, valorisation et helpdesk.</p>
+                            <a class="cr-item" href="cr-patrimoine-informatique-tp01.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">01</span>
-                <span class="cr-title">TP01 — Le patrimoine informatique</span>
+                <span class="cr-title" data-flip-title>TP01 — Le patrimoine informatique</span>
                 <span class="cr-date">6 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/glpi.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-glpi.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">02</span>
-                <span class="cr-title">TP02 — Veille sur GLPI</span>
+                <span class="cr-title" data-flip-title>TP02 — Veille sur GLPI</span>
                 <span class="cr-date">13 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-mooc-tp1-decouverte.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-b1-tp05-glpi-incidents.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">03</span>
-                <span class="cr-title">MOOC TP1 — Découverte du MOOC et autoformation</span>
-                <span class="cr-date">16 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-title" data-flip-title>TP05 — GLPI : gestion des incidents (Helpdesk)</span>
+                <span class="cr-date">22 nov. 2026</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-mooc-tp2-planning.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-b1-tp06-glpi-deploiement.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">04</span>
-                <span class="cr-title">MOOC TP2 — Planning de formation</span>
-                <span class="cr-date">23 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-title" data-flip-title>TP06 — GLPI : déploiement de logiciel</span>
+                <span class="cr-date">22 nov. 2026</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
-                            <a class="cr-item" href="reports/sotoca-mooc-tp3-suivi.pdf" download data-cursor="PDF">
+                            <a class="cr-item" href="cr-sotoca-b1-tp07-glpi-guide-utilisateur.html" data-cursor="Voir" data-transition="cr">
                 <span class="cr-idx">05</span>
-                <span class="cr-title">MOOC TP3 — Suivi de la planification</span>
-                <span class="cr-date">30 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                            <a class="cr-item" href="reports/sotoca-mooc-tp4-bilan.pdf" download data-cursor="PDF">
-                <span class="cr-idx">06</span>
-                <span class="cr-title">MOOC TP4 — Bilan de compétences et plan d&#039;action</span>
-                <span class="cr-date">7 oct. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                            <a class="cr-item" href="reports/sotoca-mooc-tp4-bilan-genere.pdf" download data-cursor="PDF">
-                <span class="cr-idx">07</span>
-                <span class="cr-title">MOOC TP4 — Bilan généré (document d&#039;origine)</span>
-                <span class="cr-date">7 oct. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
-              </a>
-                          </div>
-          </details>
-                    <details class="bloc">
-            <summary class="bloc-summary">
-              <span class="bloc-title">Bloc 3 — Cybersécurité</span>
-              <span class="bloc-meta">
-                <span>1 CR</span>
-                <span class="bloc-plus" aria-hidden="true"></span>
-              </span>
-            </summary>
-            <div class="bloc-list">
-              <p class="bloc-desc">Mise en place d&#039;un environnement d&#039;analyse sous Kali Linux en machine virtuelle : installation de l&#039;ISO, additions invité VirtualBox et mise à jour du système.</p>
-                            <a class="cr-item" href="reports/cyber-b3-tp1-kali.pdf" download data-cursor="PDF">
-                <span class="cr-idx">01</span>
-                <span class="cr-title">TP1 — Kali Linux en machine virtuelle</span>
-                <span class="cr-date">15 sept. 2026</span>
-                <span class="cr-arrow" aria-hidden="true">↓</span>
+                <span class="cr-title" data-flip-title>TP07 — GLPI : guide utilisateur et procédure de test</span>
+                <span class="cr-date">22 nov. 2026</span>
+                <span class="cr-arrow" aria-hidden="true">→</span>
               </a>
                           </div>
           </details>
@@ -762,8 +689,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
   <script src="assets/js/main.js" defer></script>
   <script src="assets/js/fluid-cursor.js" defer></script>
   <script src="assets/js/particle-text.js" defer></script>
+  <script src="assets/js/traceroute.js" defer></script>
+  <script src="assets/js/sound.js" defer></script>
 </body>
 </html>

@@ -312,10 +312,14 @@ html.cursor-hover .cursor-label { opacity: 1; }
 }
 .curtain-label {
   font-family: var(--ff-display);
-  font-size: clamp(3rem, 14vw, 11rem);
+  /* Un peu moins grand que "VEILLE"/"ACCUEIL" à la base : le rideau
+     affiche aussi le titre (variable) du compte rendu cliqué. */
+  font-size: clamp(1.8rem, 7vw, 6rem);
   text-transform: uppercase;
   color: var(--paper);
   letter-spacing: -0.02em;
+  text-align: center;
+  max-width: 85vw;
 }
 
 /* ---------- 9. Navigation ---------- */
@@ -382,6 +386,21 @@ html.cursor-hover .cursor-label { opacity: 1; }
 
 /* Bascule de thème : petit interrupteur brutaliste (rectangle + pastille
    qui glisse), pas d'icône soleil/lune décorative. */
+.sound-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--ff-mono);
+  font-size: .72rem;
+  letter-spacing: .08em;
+}
+.sound-toggle-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--fg-muted);
+  transition: background .2s ease, border-color .2s ease;
+}
+.sound-toggle.is-on .sound-toggle-dot { background: var(--accent); border-color: var(--accent); }
 .theme-toggle { display: inline-flex; align-items: center; }
 .theme-toggle-track {
   display: block;
@@ -425,7 +444,8 @@ html.cursor-hover .cursor-label { opacity: 1; }
   padding: 10px 0;
   border-bottom: 1px solid var(--line);
 }
-.nav-mobile .theme-toggle { padding: 14px 0; }
+.nav-mobile .theme-toggle,
+.nav-mobile .sound-toggle { padding: 14px 0; }
 .nav-mobile.is-open { display: flex; }
 
 /* ---------- 10. Utilitaires de mise en page ---------- */
@@ -443,8 +463,52 @@ section { position: relative; }
 
 /* ---------- 11. Hero (accueil) ---------- */
 .hero {
+  position: relative;
   padding: clamp(60px, 10vw, 120px) 0 clamp(40px, 6vw, 70px);
   border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+/* Scène TRACEROUTE : plein cadre derrière le contenu du hero (le canvas
+   est transparent, le fond papier/encre du thème actif reste visible
+   dessous ; le texte du hero passe par-dessus via l'ordre du DOM). */
+.traceroute-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.traceroute-canvas.is-ready { opacity: 1; }
+.traceroute-hud {
+  position: absolute;
+  top: clamp(60px, 10vw, 120px);
+  right: var(--gutter);
+  z-index: 1;
+  font-family: var(--ff-mono);
+  font-size: .72rem;
+  text-align: right;
+  color: var(--fg-muted);
+  pointer-events: none;
+}
+.traceroute-hud-title {
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 8px;
+  color: var(--fg);
+}
+.traceroute-hud-list { display: flex; flex-direction: column; gap: 3px; align-items: flex-end; }
+.traceroute-hud-list li {
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity .4s ease, transform .4s ease;
+  white-space: nowrap;
+}
+.traceroute-hud-list li.is-in { opacity: 1; transform: translateY(0); }
+.traceroute-hud-list li .hop-ms { color: var(--accent); margin-left: 10px; }
+@media (max-width: 960px) {
+  .traceroute-hud { display: none; }
 }
 .hero-spine {
   grid-column: 1 / 2;
@@ -856,6 +920,67 @@ details[open] .bloc-plus::after { transform: translate(-50%, -50%) rotate(90deg)
 }
 .magnetic { display: inline-block; will-change: transform; }
 
+/* ---------- 17b. Fiche détaillée d'un compte rendu ---------- */
+.cr-detail { padding: clamp(50px, 8vw, 90px) 0; }
+.cr-detail-head {
+  grid-column: 1 / 13;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: clamp(24px, 4vw, 40px);
+  margin-bottom: clamp(30px, 5vw, 56px);
+}
+.cr-detail-title { font-size: clamp(2.2rem, 6vw, 4.4rem); margin-top: 10px; text-transform: none; }
+.cr-detail-date {
+  font-family: var(--ff-mono);
+  font-size: .82rem;
+  color: var(--fg-muted);
+  margin-top: 14px;
+}
+.cr-detail-body {
+  grid-column: 1 / 13;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(24px, 3vw, 40px);
+}
+.cr-detail-context {
+  grid-column: 1 / 5;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  align-items: flex-start;
+}
+.cr-detail-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.cr-detail-tag {
+  border: 1px solid var(--line-strong);
+  padding: 5px 11px;
+  font-family: var(--ff-mono);
+  font-size: .7rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.cr-detail-preview { grid-column: 5 / 13; }
+.cr-detail-frame {
+  width: 100%;
+  height: min(75vh, 900px);
+  border: 1px solid var(--line);
+  background: var(--bg);
+  display: block;
+}
+.cr-detail-frame--fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  color: var(--fg-muted);
+  font-family: var(--ff-mono);
+  font-size: .85rem;
+}
+@media (max-width: 960px) {
+  .cr-detail-context, .cr-detail-preview { grid-column: 1 / 13; }
+  .cr-detail-frame { height: 60vh; }
+}
+
 /* ---------- 18. Pied de page ---------- */
 .site-footer { border-top: 1px solid var(--line); padding: 26px 0; }
 .site-footer-inner {
@@ -947,6 +1072,7 @@ details[open] .bloc-plus::after { transform: translate(-50%, -50%) rotate(90deg)
   .nav-links { display: none; }
   .nav-cv { display: none; }
   .theme-toggle { display: none; }
+  .sound-toggle { display: none; }
   .nav-burger { display: block; }
 
   .hero-spine { display: none; }
@@ -960,7 +1086,8 @@ details[open] .bloc-plus::after { transform: translate(-50%, -50%) rotate(90deg)
   .stat-tile:nth-child(3) { border-left: none; }
   .contact-form-wrap { margin-top: 30px; }
   .entree { grid-template-columns: 1fr; gap: 6px; }
-  .nav-mobile .theme-toggle { display: inline-flex; }
+  .nav-mobile .theme-toggle,
+  .nav-mobile .sound-toggle { display: inline-flex; }
 }
 @media (max-width: 640px) {
   .cr-item { grid-template-columns: 30px 1fr auto; }
@@ -981,34 +1108,3 @@ details[open] .bloc-plus::after { transform: translate(-50%, -50%) rotate(90deg)
   .hero-title.has-particles { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; }
   .hero-title-canvas { display: none; }
 }
-
-/* ---------- 22. Pages projet (Contrôle, GSB) ---------- */
-.entree-texte p + p { margin-top: 8px; }
-.entree-texte .lbl {
-  font-family: var(--ff-mono);
-  font-size: .7rem;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  color: var(--accent);
-  margin-right: 8px;
-}
-.entree-texte code,
-.bloc-desc code {
-  font-family: var(--ff-mono);
-  font-size: .82em;
-  border: 1px solid var(--line);
-  padding: 0 5px;
-  overflow-wrap: anywhere;
-}
-.bareme {
-  margin-top: 10px;
-  border-collapse: collapse;
-  font-family: var(--ff-mono);
-  font-size: .8rem;
-}
-.bareme th, .bareme td {
-  border: 1px solid var(--line);
-  padding: 6px 14px;
-  text-align: left;
-}
-.bareme th { color: var(--fg-muted); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }

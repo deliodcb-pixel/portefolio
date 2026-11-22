@@ -2,12 +2,6 @@
  * SPÉCIMEN — comportements du site (défilement fluide, révélations,
  * curseur personnalisé, préchargeur, transition entre pages).
  * Respecte prefers-reduced-motion à chaque étape.
- *
- * VERSION STATIQUE (GitHub Pages) — ne pas éditer directement : c'est
- * une copie de portfolio/assets/js/main.js avec un seul changement (le
- * formulaire de contact en repli mailto, pas de backend PHP disponible
- * ici). Après toute modification de main.js, reporter le changement ici
- * à la main, puis lancer deploy.sh.
  */
 (function () {
   'use strict';
@@ -20,6 +14,15 @@
   if (window.gsap && window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
   }
+
+  /* ---------- Easter egg console ---------- */
+  try {
+    console.log(
+      '%ctraceroute délio.dev\n%c1  src.local          → tu es ici\n2  dev.module\n3  net.module\n4  sec.module\n5  watch.module\n6  contact.dst        → deliodcb@gmail.com',
+      'font-family:monospace;font-weight:bold;font-size:13px;color:#1B29FF;',
+      'font-family:monospace;font-size:12px;color:#6E6B62;'
+    );
+  } catch (err) { /* console indisponible, tant pis */ }
 
   /* ---------- Thème clair / sombre ---------- */
   (function () {
@@ -169,7 +172,11 @@
   document.querySelectorAll('[data-transition]').forEach((link) => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      goWithCurtain(link.href, link.dataset.transition.toUpperCase());
+      // Pour une fiche de compte rendu, le rideau affiche son titre réel
+      // (continuité visuelle avec l'élément cliqué) plutôt qu'un mot fixe.
+      const titleEl = link.querySelector('.cr-title');
+      const label = titleEl ? titleEl.textContent.trim() : link.dataset.transition.toUpperCase();
+      goWithCurtain(link.href, label);
     });
   });
 
@@ -193,6 +200,7 @@
       return;
     }
     const counter = { n: 0 };
+    let lastTick = -1;
     gsap.timeline({
       onComplete: () => {
         gsap.to(preloader, {
@@ -200,6 +208,7 @@
           onStart: () => {
             preloader.querySelector('.preloader-panel--top').style.transform = 'translateY(-105%)';
             preloader.querySelector('.preloader-panel--bottom').style.transform = 'translateY(105%)';
+            if (window.__ddbSound) window.__ddbSound.beep({ freq: 200, duration: 0.25, type: 'sawtooth', gain: 0.04 });
           },
         });
         gsap.to('.preloader-count, .preloader-name', { opacity: 0, duration: 0.4 });
@@ -208,7 +217,15 @@
     })
       .to(counter, {
         n: 100, duration: 1.6, ease: 'power2.inOut',
-        onUpdate: () => { countEl.textContent = String(Math.round(counter.n)).padStart(2, '0'); },
+        onUpdate: () => {
+          const n = Math.round(counter.n);
+          countEl.textContent = String(n).padStart(2, '0');
+          const tick = Math.floor(n / 10);
+          if (tick > lastTick && window.__ddbSound) {
+            window.__ddbSound.beep({ freq: 700 + tick * 20, duration: 0.02, type: 'square', gain: 0.02 });
+          }
+          lastTick = tick;
+        },
       })
       .to({}, { duration: 0.3 });
   }
