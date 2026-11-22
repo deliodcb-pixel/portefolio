@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un livre{% endblock %}
+
+{% block body %}
+    <h1>Ajouter un livre</h1>
+
+    {{ include('livre/_form.html.twig', {button_label: 'Ajouter au catalogue'}) }}
+
+    <p><a href="{{ path('livre_index') }}">Retour au catalogue</a></p>
+{% endblock %}

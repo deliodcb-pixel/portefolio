@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion — GSB{% endblock %}
+
+{% block body %}
+<form class="connexion" method="post">
+    <h1>GSB</h1>
+    <p class="sous-titre">Gestion des frais de déplacement</p>
+
+    {% if erreur %}
+        <div class="alerte">Identifiant ou mot de passe incorrect.</div>
+    {% endif %}
+
+    <div class="champ">
+        <label for="login">Identifiant</label>
+        <input type="text" id="login" name="_username" value="{{ dernier_login }}" autocomplete="username" required autofocus>
+    </div>
+
+    <div class="champ">
+        <label for="mdp">Mot de passe</label>
+        <input type="password" id="mdp" name="_password" autocomplete="current-password" required>
+    </div>
+
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+    <button class="btn btn-p" type="submit">Se connecter</button>
+</form>
+{% endblock %}

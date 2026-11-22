@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mise en paiement — GSB{% endblock %}
+
+{% macro tableau(fiches, action, libelle_bouton, vide) %}
+    <table>
+        <thead>
+            <tr>
+                <th>Visiteur</th>
+                <th>Période</th>
+                <th>Validée le</th>
+                <th class="num">Montant validé</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for fiche in fiches %}
+            <tr>
+                <td>{{ fiche.visiteur.nomComplet }}</td>
+                <td>{{ fiche.periodeLibelle }}</td>
+                <td>{{ fiche.dateValidation ? fiche.dateValidation|date('d/m/Y') : '—' }}</td>
+                <td class="num">
+                    {{ (fiche.montantValide ?? fiche.total)|number_format(2, ',', ' ') }} €
+                </td>
+                <td class="num">
+                    <form method="post" action="{{ path(action, {id: fiche.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('avancer' ~ fiche.id) }}">
+                        <button class="btn btn-p btn-mini" type="submit">{{ libelle_bouton }}</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="5" class="vide">{{ vide }}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endmacro %}
+
+{% block body %}
+
+<div class="note">La mise en paiement est faite au 20 du mois suivant la saisie par les visiteurs.</div>
+
+<div class="carte">
+    <h2>Fiches validées — à mettre en paiement</h2>
+    <div class="corps">
+        {{ _self.tableau(validees, 'comptable_paiement_avancer', 'Mettre en paiement', 'Aucune fiche validée en attente') }}
+    </div>
+</div>
+
+<div class="carte">
+    <h2>Fiches en paiement — à solder</h2>
+    <div class="corps">
+        {{ _self.tableau(en_paiement, 'comptable_paiement_avancer', 'Marquer remboursée', 'Aucune fiche en cours de paiement') }}
+    </div>
+</div>
+
+{% endblock %}

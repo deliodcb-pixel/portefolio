@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes fiches de frais — GSB{% endblock %}
+
+{% block body %}
+
+<div class="carte">
+    <h2>Mes fiches de frais</h2>
+    <div class="corps">
+        <div class="note">Le suivi porte sur l'année écoulée : pour chaque mois, le montant
+            remboursé par le laboratoire et le nombre de prestations prises en compte.</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Période</th>
+                    <th>État</th>
+                    <th class="num">Forfaitisés</th>
+                    <th class="num">Hors forfait</th>
+                    <th class="num">Justificatifs</th>
+                    <th class="num">Total</th>
+                    <th class="num">Montant validé</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for fiche in fiches %}
+                <tr>
+                    <td>{{ fiche.periodeLibelle }}</td>
+                    <td><span class="badge b-{{ fiche.statut.value|lower }}">{{ fiche.statut.libelleCourt }}</span></td>
+                    <td class="num">{{ fiche.montantForfait|number_format(2, ',', ' ') }} €</td>
+                    <td class="num">{{ fiche.montantHorsForfait|number_format(2, ',', ' ') }} €</td>
+                    <td class="num">{{ fiche.nbJustificatifs }}</td>
+                    <td class="num">{{ fiche.total|number_format(2, ',', ' ') }} €</td>
+                    <td class="num">
+                        {%- if fiche.montantValide is not null -%}
+                            {{ fiche.montantValide|number_format(2, ',', ' ') }} €
+                        {%- else -%}
+                            <span class="detail">—</span>
+                        {%- endif -%}
+                    </td>
+                    <td class="num">
+                        <a class="btn btn-s btn-mini" href="{{ path('visiteur_fiche_voir', {id: fiche.id}) }}">Ouvrir</a>
+                        <a class="btn btn-s btn-mini" href="{{ path('visiteur_fiche_pdf', {id: fiche.id}) }}" target="_blank">PDF</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="8" class="vide">Aucune fiche de frais enregistrée</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

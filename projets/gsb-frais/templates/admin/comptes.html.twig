@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des comptes — GSB{% endblock %}
+
+{% block body %}
+
+<div class="note">L'administrateur crée et gère les comptes. Le service comptable ne traite
+    que les fiches de frais, il n'a pas accès à cet écran.</div>
+
+<div class="carte">
+    <h2>Visiteurs médicaux — {{ visiteurs|length }}</h2>
+    <div class="corps">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Identifiant</th>
+                    <th>Courriel</th>
+                    <th class="num">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for v in visiteurs %}
+                <tr>
+                    <td>{{ v.nomComplet }}</td>
+                    <td><code>{{ v.login }}</code></td>
+                    <td>{{ v.email ?: '—' }}</td>
+                    <td class="num">
+                        <form method="post" style="display:inline-flex; gap:4px; align-items:center"
+                              action="{{ path('admin_compte_mdp', {type: 'visiteur', id: v.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('mdpvisiteur' ~ v.id) }}">
+                            <input type="password" name="mdp" placeholder="nouveau mdp" minlength="8"
+                                   required style="width:130px; font-size:12px">
+                            <button class="btn btn-s btn-mini" type="submit">Changer</button>
+                        </form>
+                        <form method="post" style="display:inline"
+                              action="{{ path('admin_compte_supprimer', {type: 'visiteur', id: v.id}) }}"
+                              onsubmit="return confirm('Supprimer le compte de {{ v.nomComplet|e('js') }} ?')">
+                            <input type="hidden" name="_token" value="{{ csrf_token('supprvisiteur' ~ v.id) }}">
+                            <button class="btn btn-r btn-mini" type="submit">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="vide">Aucun visiteur enregistré</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Créer un compte visiteur</h3>
+        <form method="post" action="{{ path('admin_visiteur_nouveau') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('nouveau_visiteur') }}">
+            <div class="ligne">
+                <div><label for="v_prenom">Prénom</label>
+                     <input type="text" id="v_prenom" name="prenom" required></div>
+                <div><label for="v_nom">Nom</label>
+                     <input type="text" id="v_nom" name="nom" required></div>
+                <div><label for="v_email">Courriel</label>
+                     <input type="email" id="v_email" name="email"></div>
+                <div><label for="v_login">Identifiant</label>
+                     <input type="text" id="v_login" name="login" required></div>
+                <div><label for="v_mdp">Mot de passe</label>
+                     <input type="password" id="v_mdp" name="mdp" minlength="8" required></div>
+                <button class="btn btn-p" type="submit">Créer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="carte">
+    <h2>Service comptable — {{ comptables|length }}</h2>
+    <div class="corps">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Identifiant</th>
+                    <th>Courriel</th>
+                    <th class="num">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for c in comptables %}
+                <tr>
+                    <td>{{ c.nomComplet }}</td>
+                    <td><code>{{ c.login }}</code></td>
+                    <td>{{ c.email ?: '—' }}</td>
+                    <td class="num">
+                        <form method="post" style="display:inline-flex; gap:4px; align-items:center"
+                              action="{{ path('admin_compte_mdp', {type: 'comptable', id: c.id}) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('mdpcomptable' ~ c.id) }}">
+                            <input type="password" name="mdp" placeholder="nouveau mdp" minlength="8"
+                                   required style="width:130px; font-size:12px">
+                            <button class="btn btn-s btn-mini" type="submit">Changer</button>
+                        </form>
+                        <form method="post" style="display:inline"
+                              action="{{ path('admin_compte_supprimer', {type: 'comptable', id: c.id}) }}"
+                              onsubmit="return confirm('Supprimer le compte de {{ c.nomComplet|e('js') }} ?')">
+                            <input type="hidden" name="_token" value="{{ csrf_token('supprcomptable' ~ c.id) }}">
+                            <button class="btn btn-r btn-mini" type="submit">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="vide">Aucun comptable enregistré</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Créer un compte comptable</h3>
+        <form method="post" action="{{ path('admin_comptable_nouveau') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('nouveau_comptable') }}">
+            <div class="ligne">
+                <div><label for="c_prenom">Prénom</label>
+                     <input type="text" id="c_prenom" name="prenom" required></div>
+                <div><label for="c_nom">Nom</label>
+                     <input type="text" id="c_nom" name="nom" required></div>
+                <div><label for="c_email">Courriel</label>
+                     <input type="email" id="c_email" name="email"></div>
+                <div><label for="c_login">Identifiant</label>
+                     <input type="text" id="c_login" name="login" required></div>
+                <div><label for="c_mdp">Mot de passe</label>
+                     <input type="password" id="c_mdp" name="mdp" minlength="8" required></div>
+                <button class="btn btn-p" type="submit">Créer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

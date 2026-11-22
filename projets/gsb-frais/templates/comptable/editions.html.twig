@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche de PDF — GSB{% endblock %}
+
+{% block body %}
+
+<div class="carte">
+    <h2>Impression individuelle par visiteur</h2>
+    <div class="corps">
+        <div class="note">Choisissez un visiteur pour lister ses fiches et les imprimer une à une,
+            ou toutes d'un coup.</div>
+
+        <form method="get" class="ligne">
+            <div>
+                <label for="visiteur">Visiteur</label>
+                <select id="visiteur" name="visiteur" required onchange="this.form.submit()">
+                    <option value="">Sélectionner…</option>
+                    {% for v in visiteurs %}
+                        <option value="{{ v.id }}" {{ visiteur and visiteur.id == v.id ? 'selected' }}>
+                            {{ v.nomComplet }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button class="btn btn-p" type="submit">Afficher ses fiches</button>
+        </form>
+
+        {% if visiteur %}
+            <h3>Fiches de {{ visiteur.nomComplet }} — {{ fiches|length }}</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Période</th>
+                        <th>État</th>
+                        <th>Validée par</th>
+                        <th class="num">Total</th>
+                        <th class="num">Impression</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for fiche in fiches %}
+                    <tr>
+                        <td>{{ fiche.periodeLibelle }}</td>
+                        <td><span class="badge b-{{ fiche.statut.value|lower }}">{{ fiche.statut.libelleCourt }}</span></td>
+                        <td>{{ fiche.validateur ?: '—' }}</td>
+                        <td class="num">{{ (fiche.montantValide ?? fiche.total)|number_format(2, ',', ' ') }} €</td>
+                        <td class="num">
+                            <a class="btn btn-p btn-mini" target="_blank"
+                               href="{{ path('comptable_fiche_pdf', {id: fiche.id}) }}">Imprimer cette fiche</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5" class="vide">Aucune fiche pour ce visiteur</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            {% if fiches|length > 0 %}
+                <div class="actions">
+                    <a class="btn btn-s" target="_blank"
+                       href="{{ path('comptable_edition_visiteur', {id: visiteur.id}) }}">
+                        Toutes les fiches de {{ visiteur.nomComplet }} en un document
+                    </a>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<div class="carte">
+    <h2>Édition groupée d'un mois</h2>
+    <div class="corps">
+        <div class="note">Produit en un seul document toutes les fiches clôturées du mois retenu,
+            destinées aux archives papier. Une fiche par page, au format de l'annexe 1.</div>
+
+        {% if periodes is empty %}
+            <p class="vide">Aucune période disponible : aucune fiche n'a encore été enregistrée.</p>
+        {% else %}
+            <form method="get" action="{{ path('comptable_edition_lot') }}" class="ligne" target="_blank">
+                <div>
+                    <label for="periode">Mois à éditer</label>
+                    <select id="periode" name="periode" required>
+                        {% set noms = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+                                       'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'] %}
+                        {% for p in periodes %}
+                            <option value="{{ p.annee }}-{{ p.mois }}">{{ noms[p.mois] }} {{ p.annee }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-p" type="submit">Générer le PDF du mois</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Médiathèque{% endblock %}</title>
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 0; color: #222; background: #f6f7f9; }
+        header { background: #1f3a5f; color: #fff; padding: 0.8rem 1.5rem; display: flex; gap: 1.2rem; align-items: center; flex-wrap: wrap; }
+        header a { color: #fff; text-decoration: none; }
+        header a:hover { text-decoration: underline; }
+        header .spacer { flex: 1; }
+        main { max-width: 960px; margin: 1.5rem auto; padding: 0 1.5rem; }
+        table { border-collapse: collapse; width: 100%; background: #fff; }
+        th, td { border: 1px solid #d5d9e0; padding: 0.5rem 0.7rem; text-align: left; }
+        th { background: #e8ecf2; }
+        .flash { padding: 0.7rem 1rem; margin-bottom: 1rem; border-radius: 4px; }
+        .flash-success { background: #dff3e3; border: 1px solid #9bd3a6; }
+        .flash-danger { background: #fbe0e0; border: 1px solid #e29b9b; }
+        .search { margin: 1rem 0; }
+        input[type=text], input[type=email], input[type=password], input[type=search], input[type=number], input[type=date], textarea, select { padding: 0.4rem; min-width: 18rem; }
+        button { padding: 0.45rem 0.9rem; cursor: pointer; }
+        form ul { color: #b00020; }
+        .description { background: #fff; border: 1px solid #d5d9e0; padding: 0.8rem 1rem; margin: 1rem 0; }
+    </style>
+</head>
+<body>
+<header>
+    <strong>Médiathèque du lycée</strong>
+    <a href="{{ path('livre_index') }}">Catalogue</a>
+    {% if is_granted('ROLE_DOCUMENTALISTE') %}
+        <a href="{{ path('livre_new') }}">Ajouter un livre</a>
+    {% endif %}
+    <span class="spacer"></span>
+    {% if app.user %}
+        <span>{{ app.user.userIdentifier }}</span>
+        <a href="{{ path('app_logout') }}">Déconnexion</a>
+    {% else %}
+        <a href="{{ path('app_login') }}">Connexion</a>
+    {% endif %}
+</header>
+
+<main>
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash flash-{{ type }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    {% block body %}{% endblock %}
+</main>
+</body>
+</html>

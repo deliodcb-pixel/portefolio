@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<style>
+    @page { margin: 22mm 18mm; }
+    body { font-family: "DejaVu Sans", sans-serif; font-size: 10pt; color: #000; }
+    .fiche { page-break-after: always; }
+    .fiche:last-child { page-break-after: auto; }
+
+    .logo { text-align: center; font-size: 22pt; font-weight: bold; color: #1b5e9e;
+            font-style: italic; letter-spacing: 2px; margin-bottom: 4mm; }
+    h1 { font-size: 12pt; text-align: center; text-transform: uppercase;
+         border: 1px solid #000; padding: 3mm; margin-bottom: 6mm; letter-spacing: 1px; }
+
+    .entete { margin-bottom: 6mm; }
+    .entete td { padding: 1.5mm 0; font-size: 10pt; }
+    .entete .cle { width: 26mm; font-weight: bold; }
+
+    table.frais { width: 100%; border-collapse: collapse; margin-bottom: 6mm; }
+    table.frais th, table.frais td { border: 1px solid #555; padding: 2mm 2.5mm; }
+    table.frais th { background: #e8f1f9; font-style: italic; font-size: 9.5pt; text-align: center; }
+    table.frais td.num { text-align: right; }
+    table.frais caption { font-style: italic; font-weight: bold; padding-bottom: 2mm; text-align: center; }
+
+    .total { width: 100%; margin-top: 4mm; }
+    .total td { padding: 2.5mm; border: 1px solid #000; font-weight: bold; }
+    .total td.lib { text-align: right; border: 0; }
+
+    .refus { font-size: 8.5pt; color: #777; }
+    .signature { margin-top: 16mm; font-size: 9.5pt; }
+    .vide { font-style: italic; color: #666; text-align: center; padding: 3mm; }
+</style>
+</head>
+<body>
+
+{% for fiche in fiches %}
+<div class="fiche">
+
+    <div class="logo">gsb</div>
+    <h1>Remboursement de frais engagés</h1>
+
+    <table class="entete">
+        <tr>
+            <td class="cle">Visiteur</td>
+            <td>{{ fiche.visiteur.id }} &nbsp;&nbsp; {{ fiche.visiteur.nomComplet }}</td>
+        </tr>
+        <tr>
+            <td class="cle">Mois</td>
+            <td>{{ fiche.periodeLibelle }}</td>
+        </tr>
+        <tr>
+            <td class="cle">État</td>
+            <td>{{ fiche.statut.libelle }}</td>
+        </tr>
+        {% if fiche.vehicule %}
+        <tr>
+            <td class="cle">Véhicule</td>
+            <td>{{ fiche.vehicule.libelle }} — {{ fiche.tarifKm|number_format(2, ',', ' ') }} €/km</td>
+        </tr>
+        {% endif %}
+    </table>
+
+    <table class="frais">
+        <caption>Frais Forfaitaires</caption>
+        <thead>
+            <tr>
+                <th style="width:40%">Libellé</th>
+                <th style="width:20%">Quantité</th>
+                <th style="width:20%">Montant unitaire</th>
+                <th style="width:20%">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ligne in fiche.fraisForfaitaires %}
+            <tr>
+                <td>{{ ligne.libelle }}</td>
+                <td class="num">{{ ligne.quantite|number_format(0, ',', ' ') }} {{ ligne.unite }}</td>
+                <td class="num">{{ ligne.montantUnitaire|number_format(2, ',', ' ') }}</td>
+                <td class="num">{{ ligne.total|number_format(2, ',', ' ') }}</td>
+            </tr>
+        {% else %}
+            <tr><td colspan="4" class="vide">Aucun frais forfaitisé saisi</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% if fiche.trajets|length > 0 %}
+    <table class="frais">
+        <caption>Détail des trajets</caption>
+        <thead>
+            <tr>
+                <th style="width:18%">Date</th>
+                <th style="width:57%">Trajet</th>
+                <th style="width:25%">Distance</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for trajet in fiche.trajets %}
+            <tr>
+                <td>{{ trajet.dateTrajet|date('d/m/Y') }}</td>
+                <td>{{ trajet.villeDepart }} - {{ trajet.villeArrivee }}{% if trajet.allerRetour %} (aller-retour){% endif %}</td>
+                <td class="num">{{ trajet.distanceTotale|number_format(2, ',', ' ') }} km</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <table class="frais">
+        <caption>Autres Frais</caption>
+        <thead>
+            <tr>
+                <th style="width:20%">Date</th>
+                <th style="width:55%">Libellé</th>
+                <th style="width:25%">Montant</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ligne in fiche.fraisHorsForfait %}
+            <tr>
+                <td>{{ ligne.dateFrais|date('d/m/Y') }}</td>
+                <td>
+                    {{ ligne.libelle }}
+                    {% if ligne.refuse %}<span class="refus">— refusé, reporté au mois suivant</span>{% endif %}
+                </td>
+                <td class="num">
+                    {%- if ligne.refuse -%}
+                        <span class="refus">{{ ligne.montant|number_format(2, ',', ' ') }}</span>
+                    {%- else -%}
+                        {{ ligne.montant|number_format(2, ',', ' ') }}
+                    {%- endif -%}
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="3" class="vide">Aucun frais hors forfait saisi</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <table class="total">
+        <tr>
+            <td class="lib">Nombre de justificatifs pris en compte :</td>
+            <td style="width:30mm; text-align:center">{{ fiche.nbJustificatifs }}</td>
+        </tr>
+        <tr>
+            <td class="lib">TOTAL {{ '%02d/%04d'|format(fiche.mois, fiche.annee) }}</td>
+            <td style="width:30mm; text-align:right">{{ fiche.total|number_format(2, ',', ' ') }} €</td>
+        </tr>
+    </table>
+
+    <div class="signature">
+        Fait à Paris, le {{ (fiche.dateValidation ?: date())|date('d/m/Y') }}<br>
+        Vu l'agent comptable{% if fiche.validateur %} : {{ fiche.validateur }}{% endif %}
+    </div>
+
+</div>
+{% endfor %}
+
+</body>
+</html>

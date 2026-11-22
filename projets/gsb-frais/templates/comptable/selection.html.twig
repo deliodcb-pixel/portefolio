@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Valider les fiches — GSB{% endblock %}
+
+{% block body %}
+
+<div class="carte">
+    <h2>Sélection du visiteur et du mois</h2>
+    <div class="corps">
+        <div class="note">Seules les fiches clôturées sont soumises à validation. Si la campagne
+            vient de s'ouvrir, lancez d'abord la clôture des mois révolus.</div>
+
+        {% if visiteurs is empty %}
+            <p class="vide">Aucune fiche n'est actuellement en attente de validation.</p>
+        {% else %}
+            <form method="get" class="ligne">
+                <div>
+                    <label for="visiteur">Visiteur</label>
+                    <select id="visiteur" name="visiteur" required>
+                        <option value="">Sélectionner…</option>
+                        {% for v in visiteurs %}
+                            <option value="{{ v.id }}">{{ v.nomComplet }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="periode">Mois</label>
+                    <select id="periode" name="periode" required>
+                        <option value="">Sélectionner…</option>
+                        {% set vues = [] %}
+                        {% for f in a_valider %}
+                            {% set cle = f.annee ~ '-' ~ f.mois %}
+                            {% if cle not in vues %}
+                                {% set vues = vues|merge([cle]) %}
+                                <option value="{{ cle }}">{{ f.periodeLibelle }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-p" type="submit">Afficher la fiche</button>
+            </form>
+        {% endif %}
+
+        <form method="post" action="{{ path('comptable_cloturer') }}" style="margin-top:18px">
+            <input type="hidden" name="_token" value="{{ csrf_token('cloturer') }}">
+            <button class="btn btn-s btn-mini" type="submit">Lancer la clôture des mois révolus</button>
+        </form>
+    </div>
+</div>
+
+<div class="carte">
+    <h2>Fiches en attente de validation</h2>
+    <div class="corps">
+        <table>
+            <thead>
+                <tr>
+                    <th>Visiteur</th>
+                    <th>Période</th>
+                    <th class="num">Forfaitisés</th>
+                    <th class="num">Hors forfait</th>
+                    <th class="num">Justificatifs</th>
+                    <th class="num">Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for fiche in a_valider %}
+                <tr>
+                    <td>{{ fiche.visiteur.nomComplet }}</td>
+                    <td>{{ fiche.periodeLibelle }}</td>
+                    <td class="num">{{ fiche.montantForfait|number_format(2, ',', ' ') }} €</td>
+                    <td class="num">{{ fiche.montantHorsForfait|number_format(2, ',', ' ') }} €</td>
+                    <td class="num">{{ fiche.nbJustificatifs }}</td>
+                    <td class="num">{{ fiche.total|number_format(2, ',', ' ') }} €</td>
+                    <td class="num">
+                        <a class="btn btn-p btn-mini" href="{{ path('comptable_validation_fiche', {id: fiche.id}) }}">Contrôler</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="7" class="vide">Aucune fiche clôturée en attente</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
